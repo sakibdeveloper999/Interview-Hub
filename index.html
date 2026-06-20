@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Developer Interview Hub | Master the Technical Round</title>
+    <!-- Google Fonts: Outfit for sleek modern UI, JetBrains Mono for tags/code -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-base: #030712;
+            --bg-surface: rgba(17, 24, 39, 0.7);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(255, 255, 255, 0.2);
+            --text-primary: #f9fafb;
+            --text-secondary: #9ca3af;
+            --accent-js: #f59e0b;
+            --accent-react: #06b6d4;
+            --accent-node: #10b981;
+            --accent-mongo: #84cc16;
+            --accent-postgres: #3b82f6;
+            --font-main: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            line-height: 1.6;
+        }
+
+        /* Ambient Glowing Background Backgrounds */
+        .ambient-glow {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, rgba(99, 102, 241, 0) 70%);
+            top: -100px;
+            left: -100px;
+            z-index: -1;
+            filter: blur(40px);
+            pointer-events: none;
+        }
+
+        .ambient-glow-2 {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(6, 182, 212, 0.12) 0%, rgba(6, 182, 212, 0) 70%);
+            bottom: -100px;
+            right: -100px;
+            z-index: -1;
+            filter: blur(50px);
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 1.5rem;
+        }
+
+        /* Header Styles */
+        header {
+            text-align: center;
+            margin-bottom: 4rem;
+            position: relative;
+        }
+
+        .logo-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-color);
+            padding: 0.5rem 1.25rem;
+            border-radius: 9999px;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: #818cf8;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(4px);
+        }
+
+        .logo-badge span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #818cf8;
+            box-shadow: 0 0 10px #818cf8;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(0.95);
+                opacity: 0.5;
+            }
+
+            50% {
+                transform: scale(1.1);
+                opacity: 1;
+                box-shadow: 0 0 14px #818cf8;
+            }
+
+            100% {
+                transform: scale(0.95);
+                opacity: 0.5;
+            }
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 6vw, 3.75rem);
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            line-height: 1.15;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 2.5rem auto;
+            font-weight: 400;
+        }
+
+        /* Dashboard Stats Panel */
+        .stats-panel {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            max-width: 650px;
+            margin: 0 auto 3.5rem auto;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 1.25rem;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        }
+
+        .stat-item {
+            text-align: center;
+            position: relative;
+        }
+
+        .stat-item:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 25%;
+            height: 50%;
+            width: 1px;
+            background: var(--border-color);
+        }
+
+        .stat-val {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1.2;
+            background: linear-gradient(135deg, #ffffff, #a5b4fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        /* Controls Section (Filters & Search) */
+        .controls-bar {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            margin-bottom: 3rem;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        @media (min-width: 768px) {
+            .controls-bar {
+                flex-direction: row;
+            }
+        }
+
+        /* Filter Chips */
+        .filter-group {
+            display: flex;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            padding: 0.35rem;
+            border-radius: 9999px;
+            backdrop-filter: blur(8px);
+        }
+
+        .filter-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            padding: 0.5rem 1.25rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .filter-btn:hover {
+            color: var(--text-primary);
+        }
+
+        .filter-btn.active {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-primary);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Search Input */
+        .search-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 320px;
+        }
+
+        .search-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 9999px;
+            padding: 0.65rem 1.25rem 0.65rem 2.75rem;
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(8px);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: rgba(99, 102, 241, 0.5);
+            background: rgba(255, 255, 255, 0.05);
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.15);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 1.1rem;
+            height: 1.1rem;
+            color: var(--text-secondary);
+            pointer-events: none;
+        }
+
+        /* Card Grid Layout */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 1.75rem;
+        }
+
+        /* Card Design (Glassmorphic) */
+        .guide-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+                border-color 0.3s ease,
+                box-shadow 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(16px);
+        }
+
+        /* Cursor light track */
+        .guide-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 24px;
+            background: radial-gradient(800px circle at var(--mouse-x, 0) var(--mouse-y, 0), rgba(255, 255, 255, 0.05), transparent 40%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .guide-card:hover {
+            transform: translateY(-6px);
+            border-color: var(--card-border-hover, var(--border-hover));
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), 0 0 30px -10px var(--card-glow, rgba(255, 255, 255, 0.1));
+        }
+
+        /* Dynamic Border Accent Strip */
+        .card-accent-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--card-gradient, linear-gradient(90deg, #ccc, #888));
+        }
+
+        /* Icon Wrapper & Layout */
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+        }
+
+        .icon-container {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--card-glow-bg, rgba(255, 255, 255, 0.03));
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .guide-card:hover .icon-container {
+            transform: scale(1.1) rotate(2deg);
+        }
+
+        .icon-container svg {
+            width: 32px;
+            height: 32px;
+            transition: all 0.3s ease;
+        }
+
+        .topic-badge {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-color);
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            line-height: 1.3;
+            letter-spacing: -0.01em;
+            color: var(--text-primary);
+        }
+
+        .card-desc {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.75rem;
+            flex-grow: 1;
+            line-height: 1.5;
+        }
+
+        /* Card Tags */
+        .card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.75rem;
+        }
+
+        .tag {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 0.2rem 0.6rem;
+            border-radius: 6px;
+            color: var(--text-secondary);
+            transition: all 0.2s ease;
+        }
+
+        .guide-card:hover .tag {
+            border-color: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+
+        /* Action Footer */
+        .card-footer {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+            margin-top: auto;
+            z-index: 2;
+        }
+
+        .card-footer span {
+            position: relative;
+        }
+
+        .card-footer span::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -2px;
+            width: 0%;
+            height: 1.5px;
+            background: var(--text-primary);
+            transition: width 0.3s ease;
+        }
+
+        .guide-card:hover .card-footer span::after {
+            width: 100%;
+        }
+
+        .card-footer svg {
+            width: 18px;
+            height: 18px;
+            transition: transform 0.3s ease;
+        }
+
+        .guide-card:hover .card-footer svg {
+            transform: translateX(4px);
+        }
+
+        /* Not Found Message */
+        .no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 4rem 2rem;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px dashed var(--border-color);
+            border-radius: 24px;
+            display: none;
+        }
+
+        .no-results h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .no-results p {
+            color: var(--text-secondary);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            margin-top: 6rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        footer a {
+            color: #818cf8;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        footer a:hover {
+            color: #a5b4fc;
+            text-decoration: underline;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animated-entrance {
+            animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="ambient-glow"></div>
+    <div class="ambient-glow-2"></div>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="animated-entrance" style="animation-delay: 0.1s;">
+            <div class="logo-badge">
+                <span></span>
+                EXPERT INTERVIEW ENGINE
+            </div>
+            <h1>Full-Stack Interview Hub</h1>
+            <p class="subtitle">A premium collection of high-quality, toggleable interview guides covering essential
+                concepts, architectural patterns, and code explanations.</p>
+
+            <!-- Stats Grid -->
+            <div class="stats-panel">
+                <div class="stat-item">
+                    <div class="stat-val" id="stats-guides-count">5</div>
+                    <div class="stat-label">Guides</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-val" id="overall-progress-val">0%</div>
+                    <div class="stat-label">Total Learned</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-val" id="overall-count-val">0 / 167</div>
+                    <div class="stat-label">Questions</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Controls (Filters & Search) -->
+        <div class="controls-bar animated-entrance" style="animation-delay: 0.2s;">
+            <div class="filter-group">
+                <button class="filter-btn active" data-filter="all">All Specs</button>
+                <button class="filter-btn" data-filter="frontend">Frontend</button>
+                <button class="filter-btn" data-filter="backend">Backend</button>
+                <button class="filter-btn" data-filter="database">Databases</button>
+            </div>
+
+            <div class="search-wrapper">
+                <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+                <input type="text" class="search-input" id="search-box" placeholder="Search guides or topics...">
+            </div>
+        </div>
+
+        <!-- Cards Grid -->
+        <div class="cards-grid animated-entrance" style="animation-delay: 0.3s;" id="cards-wrapper">
+
+            <!-- JavaScript Card -->
+            <a href="JavaScript Interview Guide.html" class="guide-card" data-category="frontend" style="--card-gradient: linear-gradient(90deg, #fbbf24, #f59e0b); 
+                      --card-glow: rgba(245, 158, 11, 0.15); 
+                      --card-border-hover: rgba(245, 158, 11, 0.4);
+                      --card-glow-bg: rgba(245, 158, 11, 0.05);">
+                <div class="card-accent-line"></div>
+                <div class="card-top">
+                    <div class="icon-container">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="24" height="24" rx="4" fill="#F7DF1E" />
+                            <path
+                                d="M18.8 19.3c0-.3.1-.7.1-1.1v-3.7h-1.9v3.7c0 .5-.2.8-.7.8s-.6-.3-.6-.8v-5.6h-2v5.7c0 1.6.9 2.5 2.6 2.5 1.5 0 2.5-.9 2.5-2.5zm-5.4-8.8h-2.1v9.2c0 .9-.5 1.4-1.3 1.4-.7 0-1.1-.4-1.1-1.1v-1.7H7v2c0 1.7 1.1 2.7 3 2.7 2.1 0 3.3-1.1 3.3-3.2v-9.3z"
+                                fill="#000" />
+                        </svg>
+                    </div>
+                    <span class="topic-badge">JS / ES6+</span>
+                </div>
+                <h2 class="card-title">JavaScript Core</h2>
+                <p class="card-desc">Master the language's fundamental execution behavior: scope, lexical environments,
+                    asynchronous handling, prototypes, and array pipelines.</p>
+                <div class="card-tags">
+                    <span class="tag">Closures</span>
+                    <span class="tag">Promises</span>
+                    <span class="tag">Hoisting</span>
+                    <span class="tag">Event Loop</span>
+                    <span class="tag">Prototypes</span>
+                </div>
+                <!-- Progress indicator -->
+                <div class="card-progress-container" style="margin-top: auto; margin-bottom: 1.5rem; width: 100%;">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 0.4rem;">
+                        <span style="color: var(--text-secondary);">Mastery Progress</span>
+                        <span class="subject-progress-badge" id="progress-val-javascript" style="font-weight: 600; color: var(--accent-js);">0%</span>
+                    </div>
+                    <div style="width: 100%; height: 6px; background: rgba(255, 255, 255, 0.05); border-radius: 999px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.02);">
+                        <div class="subject-progress-bar" id="progress-bar-javascript" style="height: 100%; background: var(--accent-js); width: 0%; transition: width 0.4s ease; border-radius: 999px;"></div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <span>Explore Guide</span>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                            d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                    </svg>
+                </div>
+            </a>
+
+            <!-- React.js Card -->
+            <a href="React.js Interview Guide.html" class="guide-card" data-category="frontend" style="--card-gradient: linear-gradient(90deg, #22d3ee, #06b6d4); 
+                      --card-glow: rgba(6, 182, 212, 0.15); 
+                      --card-border-hover: rgba(6, 182, 212, 0.4);
+                      --card-glow-bg: rgba(6, 182, 212, 0.05);">
+                <div class="card-accent-line"></div>
+                <div class="card-top">
+                    <div class="icon-container">
+                        <svg viewBox="-11.5 -10.23174 23 20.46348" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="0" cy="0" r="2.05" fill="#06B6D4" />
+                            <g stroke="#06B6D4" stroke-width="1" fill="none">
+                                <ellipse rx="11" ry="4.2" />
+                                <ellipse rx="11" ry="4.2" transform="rotate(60)" />
+                                <ellipse rx="11" ry="4.2" transform="rotate(120)" />
+                            </g>
+                        </svg>
+                    </div>
+                    <span class="topic-badge">UI Library</span>
+                </div>
+                <h2 class="card-title">React.js Engine</h2>
+                <p class="card-desc">Deep-dive into component models, efficient rendering, custom hooks state systems,
+                    optimization strategies, and fiber reconciliation.</p>
+                <div class="card-tags">
+                    <span class="tag">Hooks</span>
+                    <span class="tag">Virtual DOM</span>
+                    <span class="tag">State</span>
+                    <span class="tag">Reconciliation</span>
+                    <span class="tag">Context</span>
+                </div>
+                <!-- Progress indicator -->
+                <div class="card-progress-container" style="margin-top: auto; margin-bottom: 1.5rem; width: 100%;">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 0.4rem;">
+                        <span style="color: var(--text-secondary);">Mastery Progress</span>
+                        <span class="subject-progress-badge" id="progress-val-react" style="font-weight: 600; color: var(--accent-react);">0%</span>
+                    </div>
+                    <div style="width: 100%; height: 6px; background: rgba(255, 255, 255, 0.05); border-radius: 999px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.02);">
+                        <div class="subject-progress-bar" id="progress-bar-react" style="height: 100%; background: var(--accent-react); width: 0%; transition: width 0.4s ease; border-radius: 999px;"></div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <span>Explore Guide</span>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                            d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                    </svg>
+                </div>
+            </a>
+
+            <!-- Node.js + Express Card -->
+            <a href="Node.js + Express Interview Guide.html" class="guide-card" data-category="backend" style="--card-gradient: linear-gradient(90deg, #34d399, #10b981); 
+                      --card-glow: rgba(16, 185, 129, 0.15); 
+                      --card-border-hover: rgba(16, 185, 129, 0.4);
+                      --card-glow-bg: rgba(16, 185, 129, 0.05);">
+                <div class="card-accent-line"></div>
+                <div class="card-top">
+                    <div class="icon-container">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M12 2L3.5 7v10L12 22l8.5-5V7L12 2zm6.5 13.9L12 19.8l-6.5-3.9V8.1L12 4.2l6.5 3.9v7.8z"
+                                fill="#10B981" />
+                            <path d="M12 6.5l4.5 2.7v5.6L12 17.5 7.5 14.8V9.2L12 6.5z" fill="#10B981" opacity="0.6" />
+                        </svg>
+                    </div>
+                    <span class="topic-badge">Runtime / Server</span>
+                </div>
+                <h2 class="card-title">Node.js & Express</h2>
+                <p class="card-desc">Understand single-threaded event architectures, asynchronous I/O, middleware
+                    pipelines, streams, security practices, and scalable APIs.</p>
+                <div class="card-tags">
+                    <span class="tag">Event Loop</span>
+                    <span class="tag">Middleware</span>
+                    <span class="tag">Streams</span>
+                    <span class="tag">REST API</span>
+                    <span class="tag">Security</span>
+                </div>
+                <!-- Progress indicator -->
+                <div class="card-progress-container" style="margin-top: auto; margin-bottom: 1.5rem; width: 100%;">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 0.4rem;">
+                        <span style="color: var(--text-secondary);">Mastery Progress</span>
+                        <span class="subject-progress-badge" id="progress-val-node" style="font-weight: 600; color: var(--accent-node);">0%</span>
+                    </div>
+                    <div style="width: 100%; height: 6px; background: rgba(255, 255, 255, 0.05); border-radius: 999px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.02);">
+                        <div class="subject-progress-bar" id="progress-bar-node" style="height: 100%; background: var(--accent-node); width: 0%; transition: width 0.4s ease; border-radius: 999px;"></div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <span>Explore Guide</span>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                            d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                    </svg>
+                </div>
+            </a>
+
+            <!-- MongoDB Card -->
+            <a href="MongoDB Interview Guide.html" class="guide-card" data-category="database" style="--card-gradient: linear-gradient(90deg, #a3e635, #84cc16); 
+                      --card-glow: rgba(132, 204, 22, 0.15); 
+                      --card-border-hover: rgba(132, 204, 22, 0.4);
+                      --card-glow-bg: rgba(132, 204, 22, 0.05);">
+                <div class="card-accent-line"></div>
+                <div class="card-top">
+                    <div class="icon-container">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M12 1.5C12 1.5 6.5 6.5 6.5 12c0 3 2.5 5.5 5.5 8.5 3-3 5.5-5.5 5.5-8.5 0-5.5-5.5-10.5-5.5-10.5z"
+                                fill="#84CC16" />
+                            <path d="M12 1.5v19c1.5-1.5 4-4 4-8.5s-4-10.5-4-10.5z" fill="#4D7C0F" />
+                            <path d="M12 20v2.5M12 1.5C12 1.5 10 5.5 10 12s2 8 2 8" stroke="#fff" stroke-width="0.5"
+                                stroke-linecap="round" />
+                        </svg>
+                    </div>
+                    <span class="topic-badge">NoSQL DB</span>
+                </div>
+                <h2 class="card-title">MongoDB Store</h2>
+                <p class="card-desc">Master document schemas, complex aggregation frameworks, indices optimization,
+                    replication sets, sharding, and high availability systems.</p>
+                <div class="card-tags">
+                    <span class="tag">Aggregations</span>
+                    <span class="tag">Indexes</span>
+                    <span class="tag">NoSQL Schemas</span>
+                    <span class="tag">Replica Sets</span>
+                    <span class="tag">Sharding</span>
+                </div>
+                <!-- Progress indicator -->
+                <div class="card-progress-container" style="margin-top: auto; margin-bottom: 1.5rem; width: 100%;">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 0.4rem;">
+                        <span style="color: var(--text-secondary);">Mastery Progress</span>
+                        <span class="subject-progress-badge" id="progress-val-mongodb" style="font-weight: 600; color: var(--accent-mongo);">0%</span>
+                    </div>
+                    <div style="width: 100%; height: 6px; background: rgba(255, 255, 255, 0.05); border-radius: 999px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.02);">
+                        <div class="subject-progress-bar" id="progress-bar-mongodb" style="height: 100%; background: var(--accent-mongo); width: 0%; transition: width 0.4s ease; border-radius: 999px;"></div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <span>Explore Guide</span>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                            d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                    </svg>
+                </div>
+            </a>
+
+            <!-- PostgreSQL Card -->
+            <a href="PostgreSQL Interview Guide.html" class="guide-card" data-category="database" style="--card-gradient: linear-gradient(90deg, #60a5fa, #3b82f6); 
+                      --card-glow: rgba(59, 130, 246, 0.15); 
+                      --card-border-hover: rgba(59, 130, 246, 0.4);
+                      --card-glow-bg: rgba(59, 130, 246, 0.05);">
+                <div class="card-accent-line"></div>
+                <div class="card-top">
+                    <div class="icon-container">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"
+                                fill="#3B82F6" />
+                        </svg>
+                    </div>
+                    <span class="topic-badge">Relational DB</span>
+                </div>
+                <h2 class="card-title">PostgreSQL Engine</h2>
+                <p class="card-desc">Understand ACID properties, complex SQL querying, performance indexing, concurrency
+                    control (MVCC), and relational schemas.</p>
+                <div class="card-tags">
+                    <span class="tag">SQL Joins</span>
+                    <span class="tag">Indexing</span>
+                    <span class="tag">ACID Model</span>
+                    <span class="tag">Transactions</span>
+                    <span class="tag">MVCC</span>
+                </div>
+                <!-- Progress indicator -->
+                <div class="card-progress-container" style="margin-top: auto; margin-bottom: 1.5rem; width: 100%;">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 0.4rem;">
+                        <span style="color: var(--text-secondary);">Mastery Progress</span>
+                        <span class="subject-progress-badge" id="progress-val-postgresql" style="font-weight: 600; color: var(--accent-postgres);">0%</span>
+                    </div>
+                    <div style="width: 100%; height: 6px; background: rgba(255, 255, 255, 0.05); border-radius: 999px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.02);">
+                        <div class="subject-progress-bar" id="progress-bar-postgresql" style="height: 100%; background: var(--accent-postgres); width: 0%; transition: width 0.4s ease; border-radius: 999px;"></div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <span>Explore Guide</span>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                            d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                    </svg>
+                </div>
+            </a>
+
+            <!-- No Results Found State -->
+            <div class="no-results" id="no-results-panel">
+                <h3>No interview guides found</h3>
+                <p>Try matching another tech stack or keyword search.</p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <p>Made for interviewees looking to stand out. Feel free to customize and expand these guides.</p>
+            <p style="margin-top: 0.5rem; font-size: 0.8rem;">
+                Back to <a href="#">Dashboard Home</a>
+            </p>
+        </footer>
+    </div>
+
+    <!-- Interactive JS scripts -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.guide-card');
+            const searchBox = document.getElementById('search-box');
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            const noResultsPanel = document.getElementById('no-results-panel');
+            const guidesCountEl = document.getElementById('stats-guides-count');
+
+            // 1. Dynamic Cursor Light Tracking (Radial Glow Effect)
+            cards.forEach(card => {
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+
+                    card.style.setProperty('--mouse-x', `${x}px`);
+                    card.style.setProperty('--mouse-y', `${y}px`);
+                });
+            });
+
+            // 2. Interactive Search & Filtering logic
+            let currentFilter = 'all';
+            let searchQuery = '';
+
+            function filterItems() {
+                let activeCount = 0;
+
+                cards.forEach(card => {
+                    const category = card.getAttribute('data-category');
+                    const title = card.querySelector('.card-title').textContent.toLowerCase();
+                    const desc = card.querySelector('.card-desc').textContent.toLowerCase();
+                    const tags = Array.from(card.querySelectorAll('.tag')).map(t => t.textContent.toLowerCase());
+
+                    const matchesFilter = (currentFilter === 'all' || category === currentFilter);
+                    const matchesSearch = !searchQuery ||
+                        title.includes(searchQuery) ||
+                        desc.includes(searchQuery) ||
+                        tags.some(tag => tag.includes(searchQuery));
+
+                    if (matchesFilter && matchesSearch) {
+                        card.style.display = 'flex';
+                        activeCount++;
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+
+                // Update guides count stat
+                guidesCountEl.textContent = activeCount;
+
+                // Show/hide "No Results" state
+                if (activeCount === 0) {
+                    noResultsPanel.style.display = 'block';
+                } else {
+                    noResultsPanel.style.display = 'none';
+                }
+            }
+
+            // Search input listener
+            searchBox.addEventListener('input', (e) => {
+                searchQuery = e.target.value.toLowerCase().trim();
+                filterItems();
+            });
+
+            // Filter button listeners
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Update active button state
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+
+                    // Set filter and apply
+                    currentFilter = btn.getAttribute('data-filter');
+                    filterItems();
+                });
+            });
+
+            // 3. Progress System integration
+            const SUBJECT_CONFIGS = {
+                javascript: { total: 40, storageKey: 'javascript', badgeId: 'progress-val-javascript', barId: 'progress-bar-javascript' },
+                react: { total: 22, storageKey: 'react', badgeId: 'progress-val-react', barId: 'progress-bar-react' },
+                node: { total: 35, storageKey: 'node', badgeId: 'progress-val-node', barId: 'progress-bar-node' },
+                mongodb: { total: 35, storageKey: 'mongodb', badgeId: 'progress-val-mongodb', barId: 'progress-bar-mongodb' },
+                postgresql: { total: 35, storageKey: 'postgresql', badgeId: 'progress-val-postgresql', barId: 'progress-bar-postgresql' }
+            };
+
+            function updateProgressDashboard() {
+                const dataStr = localStorage.getItem('interview_hub_progress');
+                let progress = {};
+                if (dataStr) {
+                    try {
+                        progress = JSON.parse(dataStr);
+                    } catch (e) {
+                        progress = {};
+                    }
+                }
+
+                let totalQuestions = 0;
+                let totalLearned = 0;
+
+                Object.keys(SUBJECT_CONFIGS).forEach(subject => {
+                    const config = SUBJECT_CONFIGS[subject];
+                    const learnedArray = progress[config.storageKey] || [];
+                    const learnedCount = Math.min(learnedArray.length, config.total); // Cap it just in case
+                    
+                    totalQuestions += config.total;
+                    totalLearned += learnedCount;
+
+                    const percent = config.total > 0 ? Math.round((learnedCount / config.total) * 100) : 0;
+                    
+                    // Update specific subject UI
+                    const badge = document.getElementById(config.badgeId);
+                    const bar = document.getElementById(config.barId);
+                    if (badge) badge.textContent = `${percent}%`;
+                    if (bar) bar.style.width = `${percent}%`;
+                });
+
+                // Update overall Stats
+                const overallPercent = totalQuestions > 0 ? Math.round((totalLearned / totalQuestions) * 100) : 0;
+                const overallProgressVal = document.getElementById('overall-progress-val');
+                const overallCountVal = document.getElementById('overall-count-val');
+
+                if (overallProgressVal) overallProgressVal.textContent = `${overallPercent}%`;
+                if (overallCountVal) overallCountVal.textContent = `${totalLearned} / ${totalQuestions}`;
+            }
+
+            updateProgressDashboard();
+        });
+    </script>
+</body>
+
+</html>

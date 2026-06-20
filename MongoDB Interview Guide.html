@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>MongoDB Engine | Technical Interview Prep</title>
+    <!-- Google Fonts: Outfit for sleek modern UI, JetBrains Mono for tags/code -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-base: #030712;
+            --bg-surface: rgba(17, 24, 39, 0.7);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(255, 255, 255, 0.2);
+            --text-primary: #f9fafb;
+            --text-secondary: #9ca3af;
+            --font-main: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            
+            --accent-subject: #84cc16;
+            --glow-subject: rgba(132, 204, 22, 0.15);
+            --border-subject-hover: rgba(132, 204, 22, 0.4);
+            --glow-bg-subject: rgba(132, 204, 22, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            line-height: 1.6;
+            padding: 2rem 1.5rem;
+        }
+
+        .ambient-glow {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--glow-subject) 0%, transparent 70%);
+            top: -100px;
+            left: -100px;
+            z-index: -1;
+            filter: blur(40px);
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .nav-header {
+            margin-bottom: 2rem;
+        }
+
+        .back-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: var(--accent-subject);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .logo-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-color);
+            padding: 0.5rem 1.25rem;
+            border-radius: 9999px;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--accent-subject);
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(4px);
+        }
+
+        .logo-badge span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--accent-subject);
+            box-shadow: 0 0 10px var(--accent-subject);
+        }
+
+        h1 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            line-height: 1.15;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, var(--text-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-size: clamp(0.95rem, 1.8vw, 1.15rem);
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 1.5rem auto;
+        }
+
+        .badge-list {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .topic-badge {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-color);
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            color: var(--text-secondary);
+        }
+
+        .progress-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(12px);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .progress-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .progress-stats {
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            color: var(--accent-subject);
+            font-weight: bold;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 999px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.02);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-subject) 0%, #fff 100%);
+            width: 0%;
+            border-radius: 999px;
+            transition: width 0.4s ease;
+            box-shadow: 0 0 10px var(--accent-subject);
+        }
+
+        .toolbar {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        @media (min-width: 768px) {
+            .toolbar {
+                flex-direction: row;
+            }
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            padding: 0.35rem;
+            border-radius: 9999px;
+            backdrop-filter: blur(8px);
+        }
+
+        .filter-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            padding: 0.5rem 1.25rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .filter-btn:hover {
+            color: var(--text-primary);
+        }
+
+        .filter-btn.active {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-primary);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .search-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 320px;
+        }
+
+        .search-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 9999px;
+            padding: 0.65rem 1.25rem 0.65rem 2.75rem;
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-subject);
+            background: rgba(255, 255, 255, 0.05);
+            box-shadow: 0 0 15px var(--glow-subject);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 1.1rem;
+            height: 1.1rem;
+            color: var(--text-secondary);
+            pointer-events: none;
+        }
+
+        .actions-bar {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--text-primary);
+            border-color: var(--accent-subject);
+        }
+
+        .questions-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .question-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: border-color 0.3s, box-shadow 0.3s, transform 0.2s;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(12px);
+        }
+
+        .question-card.learned {
+            border-color: rgba(16, 185, 129, 0.3) !important;
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.05);
+        }
+
+        .question-card:hover {
+            border-color: var(--border-subject-hover);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 0 0 15px -5px var(--glow-subject);
+        }
+
+        .card-header-wrapper {
+            background: rgba(15, 23, 42, 0.6);
+            padding: 1.25rem 1.5rem;
+            border-bottom: 2px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .question-title-text {
+            font-size: 1.15rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            line-height: 1.4;
+        }
+
+        .q-num {
+            background: var(--accent-subject);
+            color: #030712;
+            width: 28px;
+            height: 28px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 0.85rem;
+            font-weight: 700;
+            flex-shrink: 0;
+            box-shadow: 0 0 10px var(--glow-subject);
+        }
+
+        .learned-toggle-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            padding: 0.4rem 0.8rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            flex-shrink: 0;
+        }
+
+        .learned-toggle-btn:hover {
+            border-color: #10b981;
+            color: #10b981;
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .question-card.learned .learned-toggle-btn {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: #10b981;
+            color: #10b981;
+            box-shadow: 0 0 8px rgba(16, 185, 129, 0.2);
+        }
+
+        .learned-toggle-btn svg {
+            width: 14px;
+            height: 14px;
+            stroke-width: 3;
+            fill: none;
+            stroke: currentColor;
+            display: none;
+        }
+
+        .question-card.learned .learned-toggle-btn svg {
+            display: inline-block;
+        }
+
+        .toggle-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            padding: 0.8rem 1.5rem;
+            background: rgba(255, 255, 255, 0.01);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .toggle-btn {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-color);
+            padding: 0.4rem 0.9rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text-secondary);
+            font-family: inherit;
+        }
+
+        .toggle-btn:hover {
+            border-color: var(--accent-subject);
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .toggle-btn.active {
+            background: var(--accent-subject);
+            color: #030712;
+            border-color: var(--accent-subject);
+            box-shadow: 0 0 10px var(--glow-subject);
+            font-weight: 600;
+        }
+
+        .content-panel {
+            padding: 0 1.5rem;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), padding 0.2s;
+            background: rgba(0, 0, 0, 0.15);
+        }
+
+        .content-panel.show {
+            max-height: 1200px;
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .content-panel p {
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .bangla-answer {
+            font-family: 'Segoe UI', 'Noto Sans Bengali', sans-serif;
+        }
+
+        pre {
+            background: #090d16;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 12px;
+            overflow-x: auto;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        code {
+            font-family: var(--font-mono);
+            background: rgba(255, 255, 255, 0.08);
+            padding: 0.2rem 0.4rem;
+            border-radius: 6px;
+            color: var(--accent-subject);
+            font-size: 0.9em;
+        }
+
+        pre code {
+            background: transparent;
+            color: #e2e8f0;
+            padding: 0;
+            font-size: 1em;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px dashed var(--border-color);
+            border-radius: 20px;
+            display: none;
+        }
+
+        .no-results h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="ambient-glow"></div>
+    <div class="container">
+        <!-- Navigation Header -->
+        <div class="nav-header">
+            <a href="index.html" class="back-link">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+                Back to Home Hub
+            </a>
+        </div>
+
+        <header>
+            <div class="logo-badge">
+                <span></span>
+                EXPERT INTERVIEW ENGINE
+            </div>
+            <h1>MongoDB Engine</h1>
+            <p class="subtitle">Comprehensive questions with English & Bengali answers, explanations, and code examples</p>
+            <div class="badge-list">
+                <span class="topic-badge">CRUD</span>
+                <span class="topic-badge">Indexes</span>
+                <span class="topic-badge">Aggregation</span>
+                <span class="topic-badge">Replication</span>
+                <span class="topic-badge">Sharding</span>
+                <span class="topic-badge">Transactions</span>
+                <span class="topic-badge">Performance</span>
+            </div>
+        </header>
+
+        <!-- Progress Card -->
+        <div class="progress-card">
+            <div class="progress-header">
+                <div class="progress-title">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="color: var(--accent-subject);">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
+                    </svg>
+                    <span>Learning Progress</span>
+                </div>
+                <div class="progress-stats" id="progress-text">0 of 35 Mastered</div>
+                <div class="progress-stats" id="progress-percent" style="margin-left: 0.5rem;">0%</div>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="progress-bar-fill"></div>
+            </div>
+        </div>
+
+        <!-- Toolbar controls -->
+        <div class="toolbar">
+            <div class="filter-group">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="learned">Learned</button>
+                <button class="filter-btn" data-filter="unlearned">Unlearned</button>
+            </div>
+            
+            <div class="actions-bar">
+                <button class="action-btn" onclick="expandAll()">Expand All</button>
+                <button class="action-btn" onclick="collapseAll()">Collapse All</button>
+            </div>
+
+            <div class="search-wrapper">
+                <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+                <input type="text" class="search-input" id="search-box" placeholder="Search questions...">
+            </div>
+        </div>
+
+        <!-- Questions container -->
+        <div class="questions-list" id="questions-container"></div>
+        
+        <div class="no-results" id="no-results-panel">
+            <h3>No questions found</h3>
+            <p>Try refining your search or filter options.</p>
+        </div>
+
+        <footer>
+            <p>Click any toggle button to reveal answer, explanation, or code — master MongoDB for your interview!</p>
+        </footer>
+    </div>
+
+    <script>
+    const questionsData = [
+        {id:1,question:"What is MongoDB? Compare with traditional RDBMS.",englishAnswer:"MongoDB is a NoSQL, document-oriented database that stores data in flexible, JSON-like BSON documents. Unlike relational databases (tables, rows, columns), MongoDB uses collections and documents. It supports dynamic schema, horizontal scaling via sharding, and high performance for large volumes of unstructured/semi-structured data.",banglaAnswer:"MongoDB একটি NoSQL, ডকুমেন্ট-ভিত্তিক ডাটাবেজ যেখানে ডেটা JSON-সদৃশ BSON ডকুমেন্টে সংরক্ষণ করা হয়। রিলেশনাল ডাটাবেজের (টেবিল, রো, কলাম) বিপরীতে MongoDB তে collections ও documents ব্যবহার করে। ডায়নামিক স্কিমা, শার্ডিংয়ের মাধ্যমে অনুভূমিক স্কেলিং এবং বড় আকারের অগোছালো ডেটার জন্য দ্রুতগতির পারফরম্যান্স প্রদান করে।",explanation:"MongoDB's flexible schema allows fields to vary across documents. It uses BSON (binary JSON) to support rich data types. Ideal for modern apps requiring fast iteration, nested data, and distributed architecture.",exampleCode:"// Insert a document\ndb.users.insertOne({ name: \"Rahim\", age: 28, city: \"Dhaka\" })\n// Find documents\ndb.users.find({ age: { $gt: 25 } })"},
+        {id:2,question:"Explain CRUD operations in MongoDB with examples.",englishAnswer:"CRUD stands for Create, Read, Update, Delete. Methods: insertOne/insertMany, find/findOne, updateOne/updateMany/replaceOne, deleteOne/deleteMany.",banglaAnswer:"CRUD হলো Create, Read, Update, Delete। MongoDB তে Create এর জন্য insertOne/insertMany; Read এর জন্য find/findOne; Update এর জন্য updateOne/updateMany; Delete এর জন্য deleteOne/deleteMany।",explanation:"These methods form the backbone of data manipulation. Supports operators like $set, $inc, $push for updates.",exampleCode:"db.products.insertOne({ item: \"notebook\", price: 2.5 })\ndb.products.find({ price: { $lt: 5 } })\ndb.products.updateOne({ item: \"notebook\" }, { $set: { price: 3.0 } })\ndb.products.deleteOne({ item: \"notebook\" })"},
+        {id:3,question:"What are indexes in MongoDB? Explain types and benefits.",englishAnswer:"Indexes are special data structures that improve query performance. Types: Single Field, Compound, Multikey, Text, Geospatial, Hashed, TTL. Benefits: faster reads, sorting efficiency, uniqueness.",banglaAnswer:"ইন্ডেক্স বিশেষ ডাটা স্ট্রাকচার যা দ্রুত সার্চ নিশ্চিত করে। প্রকার: সিঙ্গল ফিল্ড, কম্পাউন্ড, মাল্টিকী, টেক্সট, জিওস্পেশিয়াল, হ্যাশড, টিটিএল। সুবিধা: দ্রুত রিড, সাজানো কার্যক্ষমতা।",explanation:"Without indexes, MongoDB performs collection scans. Indexes reduce scan scope but add write overhead.",exampleCode:"db.users.createIndex({ email: 1 })\ndb.users.createIndex({ age: 1, name: -1 })\ndb.users.getIndexes()"},
+        {id:4,question:"Explain Aggregation Pipeline with a real example.",englishAnswer:"Aggregation pipeline is a framework for data processing with stages like $match, $group, $sort, $project, $lookup. Each stage transforms documents sequentially.",banglaAnswer:"অ্যাগ্রিগেশন পাইপলাইন ডেটা প্রসেসিং ফ্রেমওয়ার্ক যাতে $match, $group, $sort, $project, $lookup ইত্যাদি স্টেজ থাকে।",explanation:"Pipeline operators resemble SQL GROUP BY, JOIN, HAVING. $group uses accumulators like $sum, $avg.",exampleCode:"db.orders.aggregate([\n  { $match: { status: \"completed\" } },\n  { $group: { _id: \"$category\", totalRevenue: { $sum: \"$amount\" } } },\n  { $sort: { totalRevenue: -1 } }\n])"},
+        {id:5,question:"What is replication in MongoDB? (Replica Sets)",englishAnswer:"Replication provides redundancy and high availability using replica sets. A replica set has a primary node (writes) and multiple secondary nodes (read replication).",banglaAnswer:"রেপ্লিকেশন রিডানডেন্সি এবং হাই অ্যাভেইলেবিলিটি দেয় রেপ্লিকা সেটের মাধ্যমে। প্রাইমারি নোড (লেখা) ও সেকেন্ডারি নোড (পড়া) থাকে।",explanation:"If primary fails, election picks new primary. Oplog stores write operations.",exampleCode:"rs.initiate({\n  _id: \"myReplSet\",\n  members: [{ _id: 0, host: \"mongodb1:27017\" }, { _id: 1, host: \"mongodb2:27017\" }]\n})"},
+        {id:6,question:"Explain Sharding – components and benefits.",englishAnswer:"Sharding distributes data across multiple servers. Components: Shards, Mongos (router), Config servers. Benefits: horizontal scaling, load balancing.",banglaAnswer:"শার্ডিং ডেটা একাধিক সার্ভারে বিতরণ করে। কম্পোনেন্ট: শার্ডস, মঙ্গোস, কনফিগ সার্ভার। সুবিধা: অনুভূমিক স্কেলিং, লোড ব্যালেন্সিং।",explanation:"Choose a good shard key (high cardinality, even distribution). Hashed sharding helps even distribution.",exampleCode:"sh.enableSharding(\"ecommerce\")\nsh.shardCollection(\"ecommerce.orders\", { user_id: \"hashed\" })"},
+        {id:7,question:"How do transactions work in MongoDB? (Multi-document ACID)",englishAnswer:"MongoDB supports multi-document ACID transactions from v4.0 (replica sets) and v4.2 (sharded clusters). Use session.startTransaction() and commitTransaction().",banglaAnswer:"MongoDB মাল্টি-ডকুমেন্ট ACID ট্রানজেকশন সমর্থন করে v4.0 থেকে। session.startTransaction() ও commitTransaction() ব্যবহার হয়।",explanation:"Transactions provide all-or-nothing semantics. Useful for financial operations.",exampleCode:"const session = db.getMongo().startSession();\nsession.startTransaction();\ntry {\n  session.getDatabase(\"bank\").accounts.updateOne({ id: \"A\" }, { $inc: { balance: -100 } });\n  session.commitTransaction();\n} catch(e) { session.abortTransaction(); }"},
+        {id:8,question:"Difference between find() and findOne()?",englishAnswer:"find() returns a cursor to all matching documents. findOne() returns the first matching document or null.",banglaAnswer:"find() সব মিলে যাওয়া ডকুমেন্টের জন্য কার্সর রিটার্ন করে। findOne() প্রথম মিলে যাওয়া ডকুমেন্ট অথবা null রিটার্ন করে।",explanation:"findOne() is convenient for single document retrieval.",exampleCode:"const cursor = db.users.find({ age: 30 })\nconst user = db.users.findOne({ email: \"john@example.com\" })"},
+        {id:9,question:"What is $lookup and how it works?",englishAnswer:"$lookup performs left outer join between two collections. It matches localField with foreignField, producing new array field.",banglaAnswer:"$lookup দুটি কালেকশনের মধ্যে লেফট আউটার জয়েন করে। localField ও foreignField মেলিয়ে নতুন অ্যারে ফিল্ড তৈরি করে।",explanation:"Equivalent to SQL JOIN. Ensure indexes on foreignField for performance.",exampleCode:"db.orders.aggregate([{\n  $lookup: { from: \"customers\", localField: \"customerId\", foreignField: \"_id\", as: \"customerInfo\" }\n}])"},
+        {id:10,question:"Explain update operators: $set, $unset, $inc, $push.",englishAnswer:"$set modifies or adds a field. $unset removes field. $inc increments numeric field. $push appends to an array.",banglaAnswer:"$set ফিল্ড সংশোধন/যোগ করে। $unset ফিল্ড মুছে ফেলে। $inc সংখ্যাসূচক ফিল্ড বৃদ্ধি করে। $push অ্যারেতে উপাদান যোগ করে।",explanation:"These modifiers enable efficient partial updates without rewriting whole documents.",exampleCode:"db.users.updateOne({ _id: 1 }, {\n  $set: { status: \"active\" }, $inc: { loginCount: 1 }, $push: { logs: \"login\" }\n})"},
+        {id:11,question:"What is ObjectId and _id field?",englishAnswer:"_id is unique primary key. ObjectId is a 12-byte BSON type (timestamp, machine ID, process ID, counter).",banglaAnswer:"_id ইউনিক প্রাইমারি কী। ObjectId ১২ বাইটের BSON টাইপ (টাইমস্ট্যাম্প, মেশিন আইডি, প্রসেস আইডি, কাউন্টার)।",explanation:"ObjectId includes creation timestamp, enabling sort by _id ~ creation order.",exampleCode:"db.logs.insertOne({ message: \"started\" })\nconst id = new ObjectId()\ndb.data.insertOne({ _id: id, note: \"manual\" })"},
+        {id:12,question:"Schema Validation in MongoDB (JSON Schema).",englishAnswer:"MongoDB supports schema validation using $jsonSchema operator. Define required fields, data types, patterns.",banglaAnswer:"MongoDB $jsonSchema অপারেটর ব্যবহার করে স্কিমা ভ্যালিডেশন সমর্থন করে। প্রয়োজনীয় ফিল্ড ও ডেটা টাইপ নির্ধারণ করে।",explanation:"Validation is applied on insert/update. Maintains data integrity while keeping flexibility.",exampleCode:"db.createCollection(\"employees\", {\n  validator: { $jsonSchema: { required: [\"name\"], properties: { name: { bsonType: \"string\" } } } }\n})"},
+        {id:13,question:"How to do pagination in MongoDB? (skip/limit & cursor-based)",englishAnswer:"Basic pagination: skip() + limit(). For large datasets, cursor-based pagination (range queries on indexed fields) is more efficient.",banglaAnswer:"সাধারণ পেজিনেশন: skip() + limit()। বড় ডেটাসেটের জন্য কার্সর-ভিত্তিক পেজিনেশন বেশি কার্যকর।",explanation:"skip/limit becomes slow after large skips. Cursor-based uses $gt/$lt on unique field.",exampleCode:"db.posts.find().sort({ createdAt: -1 }).skip(20).limit(10)\n// Cursor based\ndb.posts.find({ createdAt: { $lt: lastTimestamp } }).sort({ createdAt: -1 }).limit(10)"},
+        {id:14,question:"TTL (Time-To-Live) indexes – purpose and example.",englishAnswer:"TTL indexes automatically delete documents after expiration time. Useful for sessions, logs, temporary records.",banglaAnswer:"TTL ইন্ডেক্স স্বয়ংক্রিয়ভাবে নির্দিষ্ট সময় পর ডকুমেন্ট মুছে ফেলে। সেশন, লগের জন্য উপযোগী।",explanation:"Expiration based on indexed date field + TTL seconds. Deletion runs every 60 seconds.",exampleCode:"db.sessions.createIndex({ createdAt: 1 }, { expireAfterSeconds: 3600 })\ndb.sessions.insertOne({ sessionId: \"abc\", createdAt: new Date() })"},
+        {id:15,question:"Explain capped collections and their use cases.",englishAnswer:"Capped collections are fixed-size, maintain insertion order, auto-overwrite oldest documents. Used for logs, caching, queues.",banglaAnswer:"ক্যাপড কালেকশন নির্দিষ্ট আকারের, সন্নিবেশ ক্রম বজায় রাখে এবং পুরাতন ডকুমেন্ট ওভাররাইট করে। লগ, ক্যাশিং এর কাজে ব্যবহৃত হয়।",explanation:"No deletions allowed, writes are extremely fast. Support tailable cursors.",exampleCode:"db.createCollection(\"auditLog\", { capped: true, size: 1048576, max: 5000 })"},
+        {id:16,question:"What is the use of explain() method?",englishAnswer:"explain() returns query execution statistics: which index used, examined documents, execution time, and stages (COLLSCAN, IXSCAN).",banglaAnswer:"explain() কোয়েরি এক্সিকিউশনের পরিসংখ্যান ফেরত দেয়: ইন্ডেক্স ব্যবহার, স্ক্যানকৃত ডকুমেন্ট সংখ্যা, এক্সিকিউশন টাইম।",explanation:"Three modes: 'queryPlanner', 'executionStats', 'allPlansExecution'. Helps optimize slow queries.",exampleCode:"db.users.find({ age: { $gt: 25 } }).explain(\"executionStats\")"},
+        {id:17,question:"Save() vs insert() differences (legacy vs modern).",englishAnswer:"save() is deprecated. Originally, save() would insert if _id not exists or replace if exists. insert() strictly inserts. Use insertOne()/replaceOne()/updateOne with upsert.",banglaAnswer:"save() অবচিত। save() _id না থাকলে insert করত, থাকলে replace করত। বর্তমানে insertOne(), replaceOne() ব্যবহার করুন।",explanation:"Use updateOne with { upsert: true } for upsert operations.",exampleCode:"db.users.updateOne({ _id: 123 }, { $set: { name: \"Shamim\" } }, { upsert: true })"},
+        {id:18,question:"What are MongoDB data types? List important ones.",englishAnswer:"BSON data types: String, Object, Array, ObjectId, Boolean, Date, Integer, Decimal128, Timestamp, Binary, etc.",banglaAnswer:"BSON ডেটা টাইপ: String, Object, Array, ObjectId, Boolean, Date, Integer, Decimal128, Timestamp, Binary ইত্যাদি।",explanation:"Document size limit 16MB. Use Decimal128 for precise monetary values.",exampleCode:"db.values.insertOne({ name: \"test\", count: NumberInt(100), ratio: NumberDecimal(\"19.99\"), createdAt: new Date() })"},
+        {id:19,question:"How to handle text search in MongoDB?",englishAnswer:"Use text indexes and $text operator. Provides stemming, case-insensitive matching, relevance scoring.",banglaAnswer:"টেক্সট ইনডেক্স ও $text অপারেটর ব্যবহার করুন। স্টেমিং, কেস-ইনসেনসিটিভ ম্যাচিং ও রেলেভেন্স স্কোরিং দেয়।",explanation:"Create text index on fields. Query with $text and sort by textScore.",exampleCode:"db.blog.createIndex({ title: \"text\", content: \"text\" })\ndb.blog.find({ $text: { $search: \"performance tips\" } })"},
+        {id:20,question:"Difference between MongoDB and relational databases (SQL) – when to use?",englishAnswer:"MongoDB: schema-less, nested documents, horizontal scaling. SQL: rigid schema, JOINs, vertical scaling. Use MongoDB for agile, distributed systems. Use SQL for complex joins, strict consistency.",banglaAnswer:"MongoDB: স্কিমালেস, নেস্টেড ডকুমেন্ট, অনুভূমিক স্কেলিং। SQL: কঠোর স্কিমা, JOINs, উল্লম্ব স্কেলিং।",explanation:"Consider data relationships: embedded docs reduce JOINs but may cause duplication. Choose based on access patterns.",exampleCode:"// Embedded document\n{ user: \"Al Amin\", orders: [{ product: \"laptop\", qty: 1 }] }"},
+        {id:21,question:"What is a covered query in MongoDB?",englishAnswer:"A covered query is one where all the fields in the query are part of an index, and all required fields are returned from the index without fetching the actual documents. This is very fast.",banglaAnswer:"কভার্ড কোয়েরি হলো সেই কোয়েরি যেখানে কোয়েরির সব ফিল্ড ও রিটার্ন করা ফিল্ড ইনডেক্সের অংশ, ফলে ডকুমেন্ট না পড়েই শুধু ইনডেক্স থেকে ফলাফল পাওয়া যায়।",explanation:"Use projection to return only indexed fields. _id must be explicitly excluded if not indexed.",exampleCode:"db.users.createIndex({ name: 1, age: 1 })\ndb.users.find({ name: \"John\" }, { _id: 0, name: 1, age: 1 }).explain()"},
+        {id:22,question:"What are MongoDB Atlas and its features?",englishAnswer:"MongoDB Atlas is a fully-managed cloud database service. Features: automated backups, global clusters, performance advisor, serverless options, security features, and monitoring.",banglaAnswer:"MongoDB Atlas একটি সম্পূর্ণ ম্যানেজড ক্লাউড ডাটাবেজ সার্ভিস। বৈশিষ্ট্য: অটোমেটেড ব্যাকআপ, গ্লোবাল ক্লাস্টার, পারফরম্যান্স অ্যাডভাইজর, সার্ভারলেস অপশন।",explanation:"Atlas abstracts infrastructure management, provides easy scaling, and integrates with cloud providers (AWS, GCP, Azure).",exampleCode:"// No code required - Atlas provides UI, API, and CLI for cluster management"},
+        {id:23,question:"What is the aggregation $group stage with accumulators?",englishAnswer:"$group groups documents by a specified _id expression and applies accumulators like $sum, $avg, $max, $min, $push, $addToSet to compute values for each group.",banglaAnswer:"$group নির্দিষ্ট _id এক্সপ্রেশন অনুযায়ী ডকুমেন্ট গ্রুপ করে এবং $sum, $avg, $max, $min, $push ইত্যাদি অ্যাকুমুলেটর ব্যবহার করে প্রতিটি গ্রুপের মান গণনা করে।",explanation:"$group is similar to SQL GROUP BY. It can produce arrays, unique sets, and statistical aggregates.",exampleCode:"db.sales.aggregate([\n  { $group: { _id: \"$product\", totalQty: { $sum: \"$quantity\" }, avgPrice: { $avg: \"$price\" }, items: { $push: \"$$ROOT\" } } }\n])"},
+        {id:24,question:"What are MongoDB change streams?",englishAnswer:"Change streams allow applications to access real-time data changes (insert, update, delete, replace) on a collection, database, or deployment. They are built on the oplog and provide a reactive programming model.",banglaAnswer:"চেঞ্জ স্ট্রিম অ্যাপ্লিকেশনকে রিয়াল-টাইম ডেটা পরিবর্তন (ইনসার্ট, আপডেট, ডিলিট) অ্যাক্সেস করতে দেয়। এটি oplog-এর উপর ভিত্তি করে কাজ করে।",explanation:"Useful for event-driven architectures, caching invalidation, and synchronizing data across systems.",exampleCode:"const changeStream = db.collection('orders').watch();\nchangeStream.on('change', (change) => {\n  console.log('Change detected:', change);\n});"},
+        {id:25,question:"Explain the difference between $elemMatch and simple dot notation for array queries.",englishAnswer:"$elemMatch matches documents that contain an array element with all specified conditions simultaneously. Dot notation matches if any element satisfies each condition separately, potentially different elements.",banglaAnswer:"$elemMatch একটি একক অ্যারে উপাদানের উপর একাধিক শর্ত একসাথে মেলায়। ডট নোটেশন ভিন্ন উপাদান থেকে শর্ত পূরণ করলেও মিলিয়ে ফেলতে পারে।",explanation:"Use $elemMatch when multiple conditions must apply to the same array element.",exampleCode:"// Wrong: matches if any grade > 80 and any grade < 70 (could be different subjects)\ndb.students.find({ \"grades.grade\": { $gt: 80, $lt: 70 } })\n// Correct: same subject must have both conditions\ndb.students.find({ grades: { $elemMatch: { grade: { $gt: 80, $lt: 70 } } } })"},
+        {id:26,question:"What is the role of the config server in sharded clusters?",englishAnswer:"Config servers store metadata and configuration settings for the sharded cluster, including which ranges of data (chunks) belong to which shard. They are critical for cluster operation.",banglaAnswer:"কনফিগ সার্ভার শার্ডেড ক্লাস্টারের মেটাডেটা ও কনফিগারেশন সংরক্ষণ করে, যেমন কোন ডেটা রেঞ্জ (চাঙ্ক) কোন শার্ডের অন্তর্গত।",explanation:"Config servers run as a replica set. If config servers become unavailable, the cluster's metadata cannot be accessed.",exampleCode:"// Config server replica set configuration example\nsh.addShard(\"shard01/192.168.1.10:27018\")"},
+        {id:27,question:"How does MongoDB handle concurrency and locking?",englishAnswer:"MongoDB uses multi-granularity locking with intent locks. WiredTiger storage engine uses optimistic concurrency control and document-level locking by default, allowing high concurrency for read and write operations.",banglaAnswer:"MongoDB মাল্টি-গ্রানুলারিটি লকিং ব্যবহার করে। WiredTiger স্টোরেজ ইঞ্জিন ডকুমেন্ট-লেভেল লকিং ও অপটিমিস্টিক কনকারেন্সি কন্ট্রোল ব্যবহার করে।",explanation:"Global, database, and collection locks are used for administrative operations. Document-level locks improve concurrency.",exampleCode:"// Check current locks\ndb.currentOp({ \"waitingForLock\": true })"},
+        {id:28,question:"What is the difference between updateOne, updateMany, and replaceOne?",englishAnswer:"updateOne updates the first matching document using update operators. updateMany updates all matching documents. replaceOne replaces the entire document (except _id) with a new document, not using update operators.",banglaAnswer:"updateOne প্রথম মেলানো ডকুমেন্ট আপডেট করে। updateMany সব মেলানো ডকুমেন্ট আপডেট করে। replaceOne সম্পূর্ণ ডকুমেন্টটি (শুধু _id ব্যতীত) একটি নতুন ডকুমেন্ট দিয়ে প্রতিস্থাপন করে।",explanation:"replaceOne does not support update operators; it replaces the entire content. Use when you want to completely rewrite a document.",exampleCode:"db.users.replaceOne({ _id: 1 }, { name: \"NewName\", email: \"new@mail.com\" })"},
+        {id:29,question:"What are MongoDB's read and write concerns?",englishAnswer:"Read concern determines consistency of query results (local, available, majority, linearizable). Write concern specifies acknowledgment level (w:0, w:1, w:majority). They balance durability, consistency, and performance.",banglaAnswer:"রিড কনসার্ন কোয়েরির ফলাফলের কনসিসটেন্সি নির্ধারণ করে। রাইট কনসার্ন নির্দেশ করে কতগুলো নোড রাইট অপারেশন নিশ্চিত করবে।",explanation:"Use majority read/write concerns for strong consistency. Lower concerns improve performance but risk data loss or stale reads.",exampleCode:"db.products.insertOne({ name: \"item\" }, { writeConcern: { w: \"majority\", wtimeout: 5000 } })\ndb.products.find().readConcern(\"majority\")"},
+        {id:30,question:"Explain MongoDB's $regex operator and performance considerations.",englishAnswer:"$regex provides pattern matching using regular expressions. To use indexes efficiently, the regex must be anchored (^ prefix) and be case-sensitive. Leading wildcards (.*text) cannot use indexes.",banglaAnswer:"$regex রেগুলার এক্সপ্রেশন ব্যবহার করে প্যাটার্ন ম্যাচিং করে। ইনডেক্স ব্যবহারের জন্য রেজেক্স নোঙ্গরযুক্ত (^ প্রিফিক্স) ও কেস-সেনসিটিভ হতে হবে।",explanation:"Use text indexes for full-text search. For simple prefix searches, regex with ^ works efficiently with indexes.",exampleCode:"// Indexable (prefix)\ndb.users.find({ name: { $regex: /^Joh/ } })\n// Not indexable (leading wildcard)\ndb.users.find({ name: { $regex: /son$/i } })"},
+        {id:31,question:"What is the difference between hashed and ranged sharding?",englishAnswer:"Hashed sharding distributes data evenly using a hash of the shard key, ideal for monotonically increasing keys. Ranged sharding distributes based on shard key values, good for range queries but can create hot spots.",banglaAnswer:"হ্যাশড শার্ডিং শার্ড কী-এর হ্যাশ ব্যবহার করে সমানভাবে ডেটা বিতরণ করে। রেঞ্জ শার্ডিং শার্ড কী মানের উপর ভিত্তি করে বিতরণ করে, যা রেঞ্জ কোয়েরির জন্য ভাল কিন্তু হট স্পট তৈরি করতে পারে।",explanation:"Choose ranged sharding if queries often filter on shard key ranges. Choose hashed sharding for write scaling.",exampleCode:"// Hashed\nsh.shardCollection(\"db.col\", { userId: \"hashed\" })\n// Ranged\nsh.shardCollection(\"db.col\", { createdAt: 1 })"},
+        {id:32,question:"How to perform upsert in MongoDB?",englishAnswer:"Upsert updates a document if it exists, otherwise inserts a new document. Set the upsert option to true in updateOne, updateMany, or replaceOne.",banglaAnswer:"Upsert অপারেশন ডকুমেন্ট থাকলে আপডেট করে, না থাকলে নতুন ডকুমেন্ট ইনসার্ট করে। updateOne বা replaceOne এ upsert: true অপশন সেট করুন।",explanation:"Upserts are atomic and useful for counters or 'find-or-create' patterns.",exampleCode:"db.counters.updateOne(\n  { _id: \"pageViews\" },\n  { $inc: { views: 1 } },\n  { upsert: true }\n)"},
+        {id:33,question:"What is the aggregation $facet stage?",englishAnswer:"$facet allows running multiple aggregation pipelines within a single stage on the same set of input documents, producing a multi-faceted output. Useful for generating complex reports and analytics.",banglaAnswer:"$facet একই ইনপুট ডকুমেন্টের উপর একাধিক অ্যাগ্রিগেশন পাইপলাইন চালিয়ে মাল্টি-ফ্যাসেটেড আউটপুট তৈরি করে। জটিল রিপোর্ট ও অ্যানালিটিক্সের জন্য উপযোগী।",explanation:"Each sub-pipeline in $facet receives the same input documents. Great for dashboards, filters, and category counts.",exampleCode:"db.products.aggregate([{\n  $facet: {\n    \"categories\": [{ $group: { _id: \"$category\", count: { $sum: 1 } } }],\n    \"priceStats\": [{ $group: { _id: null, avgPrice: { $avg: \"$price\" }, maxPrice: { $max: \"$price\" } } }]\n  }\n}])"},
+        {id:34,question:"What are MongoDB's hidden and delayed secondary members?",englishAnswer:"Hidden members are not visible to applications and cannot become primary. Delayed members lag behind the primary by a specified time (e.g., 1 hour) for recovery from human errors.",banglaAnswer:"হিডেন সদস্য অ্যাপ্লিকেশনের কাছে অদৃশ্য ও প্রাইমারি হতে পারে না। ডিলেড সদস্য প্রাইমারির থেকে নির্দিষ্ট সময় পিছিয়ে থাকে (যেমন ১ ঘণ্টা), মানবিক ত্রুটি থেকে পুনরুদ্ধারে সহায়তা করে।",explanation:"Use hidden for backups or analytics workloads. Use delayed for point-in-time recovery.",exampleCode:"rs.add({ host: \"mongodb4:27017\", priority: 0, hidden: true })\nrs.add({ host: \"mongodb5:27017\", priority: 0, slaveDelay: 3600, hidden: true })"},
+        {id:35,question:"How do you optimize a slow MongoDB query?",englishAnswer:"Steps: 1) Use explain() to analyze query. 2) Create proper indexes. 3) Avoid regex with leading wildcards. 4) Use projection to return only needed fields. 5) Use query patterns that leverage indexes. 6) Consider sharding for huge datasets.",banglaAnswer:"ধীর কোয়েরি অপটিমাইজ করার ধাপ: 1) explain() ব্যবহার করে বিশ্লেষণ। 2) সঠিক ইনডেক্স তৈরি। 3) লিডিং ওয়াইল্ডকার্ড রেজেক্স এড়ানো। 4) প্রকল্পেশন ব্যবহার। 5) ইনডেক্স ব্যবহারযোগ্য কোয়েরি প্যাটার্ন। 6) বড় ডেটার জন্য শার্ডিং বিবেচনা।",explanation:"Always check for COLLSCAN (collection scan) in explain output. Use covered queries when possible.",exampleCode:"// Analyze query\ndb.orders.find({ customerId: \"C123\", status: \"shipped\" }).explain(\"executionStats\")\n// Create compound index\ndb.orders.createIndex({ customerId: 1, status: 1 })"}
+    ];
+
+    const SUBJECT_KEY = 'mongodb';
+
+    const container = document.getElementById('questions-container');
+    const searchBox = document.getElementById('search-box');
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const noResultsPanel = document.getElementById('no-results-panel');
+
+    let currentFilter = 'all';
+    let searchQuery = '';
+
+    // LocalStorage Helper
+    function getProgress() {
+        const data = localStorage.getItem('interview_hub_progress');
+        if (!data) return {};
+        try {
+            return JSON.parse(data);
+        } catch (e) {
+            return {};
+        }
+    }
+
+    function saveProgress(progress) {
+        localStorage.setItem('interview_hub_progress', JSON.stringify(progress));
+    }
+
+    function toggleQuestionLearned(qId) {
+        const progress = getProgress();
+        if (!progress[SUBJECT_KEY]) {
+            progress[SUBJECT_KEY] = [];
+        }
+        
+        const index = progress[SUBJECT_KEY].indexOf(qId);
+        if (index > -1) {
+            progress[SUBJECT_KEY].splice(index, 1);
+        } else {
+            progress[SUBJECT_KEY].push(qId);
+        }
+        
+        saveProgress(progress);
+        updateProgressUI();
+        
+        // Update Card Visuals
+        const card = document.getElementById(`card-q${qId}`);
+        if (card) {
+            if (progress[SUBJECT_KEY].includes(qId)) {
+                card.classList.add('learned');
+            } else {
+                card.classList.remove('learned');
+            }
+        }
+    }
+
+    function updateProgressUI() {
+        const progress = getProgress();
+        const learnedList = progress[SUBJECT_KEY] || [];
+        const total = questionsData.length;
+        const count = learnedList.filter(id => questionsData.some(q => q.id === id)).length;
+        const percent = total > 0 ? Math.round((count / total) * 100) : 0;
+        
+        const textEl = document.getElementById('progress-text');
+        const percentEl = document.getElementById('progress-percent');
+        const fillEl = document.getElementById('progress-bar-fill');
+
+        if (textEl) textEl.textContent = `${count} of ${total} Mastered`;
+        if (percentEl) percentEl.textContent = `${percent}%`;
+        if (fillEl) fillEl.style.width = `${percent}%`;
+    }
+
+    // Escape HTML Helper
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    function renderQuestions() {
+        const progress = getProgress();
+        const learnedList = progress[SUBJECT_KEY] || [];
+        let html = '';
+        let visibleCount = 0;
+
+        questionsData.forEach(q => {
+            const isLearned = learnedList.includes(q.id);
+            const matchesFilter = currentFilter === 'all' || 
+                (currentFilter === 'learned' && isLearned) || 
+                (currentFilter === 'unlearned' && !isLearned);
+
+            const englishText = q.englishAnswer || q.english || '';
+            const banglaText = q.banglaAnswer || q.bangla || '';
+            const codeText = q.exampleCode || q.code || '';
+
+            const titleLower = q.question.toLowerCase();
+            const engLower = englishText.toLowerCase();
+            const banLower = banglaText.toLowerCase();
+            const expLower = (q.explanation || '').toLowerCase();
+            const topicLower = (q.topic || '').toLowerCase();
+            
+            const matchesSearch = !searchQuery || 
+                titleLower.includes(searchQuery) || 
+                engLower.includes(searchQuery) || 
+                banLower.includes(searchQuery) || 
+                expLower.includes(searchQuery) ||
+                topicLower.includes(searchQuery);
+
+            if (matchesFilter && matchesSearch) {
+                visibleCount++;
+                const qId = `q${q.id}`;
+                const learnedClass = isLearned ? 'learned' : '';
+                
+                html += `
+                    <div class="question-card ${learnedClass}" id="card-${qId}">
+                        <div class="card-header-wrapper">
+                            <div class="question-title-text">
+                                <span class="q-num">${q.id}</span>
+                                <h2>${escapeHtml(q.question)}</h2>
+                                ${q.topic ? `<span class="topic-badge" style="margin-left: 0.5rem; font-size: 0.75rem; background: rgba(132, 204, 22, 0.1); border-color: rgba(132, 204, 22, 0.2); color: #84cc16;">${escapeHtml(q.topic)}</span>` : ''}
+                            </div>
+                            <button class="learned-toggle-btn" onclick="toggleQuestionLearned(${q.id})">
+                                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                                <span>Mastered</span>
+                            </button>
+                        </div>
+                        <div class="toggle-group">
+                            <button class="toggle-btn" data-target="eng-${qId}">English Answer</button>
+                            <button class="toggle-btn" data-target="ban-${qId}">Bengali Answer</button>
+                            <button class="toggle-btn" data-target="exp-${qId}">Explanation</button>
+                            <button class="toggle-btn" data-target="code-${qId}">Example Code</button>
+                        </div>
+                        <div id="eng-${qId}" class="content-panel answer-text"><p>${escapeHtml(englishText)}</p></div>
+                        <div id="ban-${qId}" class="content-panel answer-text bangla-answer"><p>${escapeHtml(banglaText)}</p></div>
+                        <div id="exp-${qId}" class="content-panel explanation-text"><p>${escapeHtml(q.explanation)}</p></div>
+                        <div id="code-${qId}" class="content-panel code-text"><pre><code>${escapeHtml(codeText)}</code></pre></div>
+                    </div>
+                `;
+            }
+        });
+
+        container.innerHTML = html;
+
+        // Re-attach panel toggle handlers
+        document.querySelectorAll('.toggle-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const targetId = this.getAttribute('data-target');
+                const targetPanel = document.getElementById(targetId);
+                if (targetPanel) {
+                    targetPanel.classList.toggle('show');
+                    this.classList.toggle('active');
+                }
+            });
+        });
+
+        // Toggle card cursor glow effect
+        const cards = document.querySelectorAll('.question-card');
+        cards.forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                card.style.setProperty('--mouse-x', `${x}px`);
+                card.style.setProperty('--mouse-y', `${y}px`);
+            });
+        });
+
+        if (visibleCount === 0) {
+            noResultsPanel.style.display = 'block';
+        } else {
+            noResultsPanel.style.display = 'none';
+        }
+    }
+
+    // Search and filter listeners
+    if (searchBox) {
+        searchBox.addEventListener('input', (e) => {
+            searchQuery = e.target.value.toLowerCase().trim();
+            renderQuestions();
+        });
+    }
+
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            filterBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentFilter = btn.getAttribute('data-filter');
+            renderQuestions();
+        });
+    });
+
+    // Expand/Collapse all
+    window.expandAll = function() {
+        document.querySelectorAll('.question-card .toggle-btn').forEach(btn => {
+            const targetId = btn.getAttribute('data-target');
+            const targetPanel = document.getElementById(targetId);
+            if (targetPanel && !targetPanel.classList.contains('show')) {
+                targetPanel.classList.add('show');
+                btn.classList.add('active');
+            }
+        });
+    }
+
+    window.collapseAll = function() {
+        document.querySelectorAll('.question-card .toggle-btn').forEach(btn => {
+            const targetId = btn.getAttribute('data-target');
+            const targetPanel = document.getElementById(targetId);
+            if (targetPanel && targetPanel.classList.contains('show')) {
+                targetPanel.classList.remove('show');
+                btn.classList.remove('active');
+            }
+        });
+    }
+
+    // Initial load
+    updateProgressUI();
+    renderQuestions();
+</script>
+</body>
+</html>

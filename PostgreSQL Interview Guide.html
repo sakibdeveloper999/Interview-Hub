@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>PostgreSQL Interview Prep | Toggle Q&A with Code & Explanation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #eef2ff;
+            color: #0f172a;
+            padding: 2rem 1rem;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #0066a0, #336699);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .header p {
+            color: #334155;
+            margin-top: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .badge {
+            background: #e2e8f0;
+            display: inline-block;
+            padding: 0.25rem 1rem;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            color: #1e293b;
+            margin-top: 0.75rem;
+        }
+
+        .question-card {
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+            overflow: hidden;
+            transition: all 0.2s;
+            border: 1px solid #cbd5e1;
+        }
+
+        .question-title {
+            background: #f8fafc;
+            padding: 1.2rem 1.5rem;
+            border-bottom: 2px solid #cbd5e1;
+        }
+
+        .question-title h2 {
+            font-size: 1.35rem;
+            font-weight: 600;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .q-num {
+            background: #336699;
+            color: white;
+            width: 32px;
+            height: 32px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 60px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .toggle-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.65rem;
+            padding: 1rem 1.5rem;
+            background: #ffffff;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .toggle-btn {
+            background: #f1f5f9;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 40px;
+            font-weight: 500;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #1e293b;
+            font-family: inherit;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+        }
+
+        .toggle-btn:hover {
+            background: #e2e8f0;
+            transform: translateY(-1px);
+        }
+
+        .toggle-btn.active {
+            background: #336699;
+            color: white;
+            box-shadow: 0 2px 6px rgba(51,102,153,0.2);
+        }
+
+        .content-panel {
+            padding: 0 1.5rem;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s ease-out, padding 0.2s;
+            background: #ffffff;
+            border-bottom: 1px solid transparent;
+        }
+
+        .content-panel.show {
+            max-height: 900px;
+            padding: 1.2rem 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .answer-text p, .explanation-text p {
+            margin-bottom: 0.75rem;
+        }
+
+        .bangla-answer {
+            font-family: 'Segoe UI', 'Noto Sans Bengali', sans-serif;
+            line-height: 1.6;
+        }
+
+        pre {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 16px;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+
+        code {
+            font-family: monospace;
+            background: #f1f5f9;
+            padding: 0.2rem 0.4rem;
+            border-radius: 8px;
+            color: #0f172a;
+        }
+
+        pre code {
+            background: transparent;
+            color: inherit;
+            padding: 0;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            color: #475569;
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 640px) {
+            .toggle-group {
+                padding: 0.8rem 1rem;
+            }
+            .question-title h2 {
+                font-size: 1.2rem;
+            }
+            .toggle-btn {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div style="margin-top: 1rem; margin-bottom: 1rem;">
+        <a href="index.html" style="color: #475569; text-decoration: none; font-size: 0.95rem; display: inline-flex; align-items: center; gap: 0.5rem; transition: color 0.2s; font-family: 'Segoe UI', sans-serif;" onmouseover="this.style.color='#3b82f6'" onmouseout="this.style.color='#475569'">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+            </svg>
+            Back to Home Hub
+        </a>
+    </div>
+    <div class="header">
+        <h1>🐘 PostgreSQL Mastery - Complete Interview Guide</h1>
+        <p>35+ essential questions — English & বাংলা answers, detailed explanations, real SQL & PL/pgSQL examples</p>
+        <div class="badge">⚡ Covers: ACID, Indexes, Joins, CTE, Window Functions, Partitioning, Replication, Performance Tuning & more</div>
+    </div>
+    <div id="questions-container"></div>
+    <footer>
+        <p>💡 Click any toggle button (English Answer / বাংলা উত্তর / Explanation / Code) — master PostgreSQL for your next interview!</p>
+    </footer>
+</div>
+
+<script>
+    const questionsData = [
+        {id:1,question:"What is PostgreSQL? Explain its key features.",englishAnswer:"PostgreSQL is a powerful, open-source object-relational database system. It supports ACID transactions, advanced data types (JSON, arrays, hstore), concurrency control (MVCC), extensibility, and standard SQL compliance.",banglaAnswer:"PostgreSQL একটি শক্তিশালী, ওপেন-সোর্স অবজেক্ট-রিলেশনাল ডাটাবেজ সিস্টেম। এটি ACID ট্রানজেকশন, উন্নত ডেটা টাইপ (JSON, arrays), MVCC, এবং SQL মানদণ্ড সমর্থন করে।",explanation:"PostgreSQL excels in reliability, feature richness, and performance. It's highly extensible with custom functions, procedural languages, and indexing methods (B-tree, Hash, GIN, GiST).",exampleCode:`-- Create table with advanced features
+CREATE TABLE products (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100),
+    attributes JSONB,
+    tags TEXT[],
+    created_at TIMESTAMP DEFAULT NOW()
+);`},
+        {id:2,question:"Explain ACID properties in PostgreSQL.",englishAnswer:"ACID: Atomicity (all-or-nothing), Consistency (valid state), Isolation (concurrent transactions appear serial), Durability (committed changes persist). PostgreSQL ensures these via WAL (Write-Ahead Logging) and MVCC.",banglaAnswer:"ACID: অ্যাটমিসিটি (সব বা কিছুই না), কনসিসটেন্সি (বৈধ অবস্থা), আইসোলেশন (সমবর্তী লেনদেন সিরিয়াল মনে হয়), ডিউরেবিলিটি (কমিট করা পরিবর্তন স্থায়ী)।",explanation:"MVCC (Multi-Version Concurrency Control) provides isolation without read locks. WAL ensures durability even after crash.",exampleCode:`BEGIN;
+UPDATE accounts SET balance = balance - 100 WHERE id = 1;
+UPDATE accounts SET balance = balance + 100 WHERE id = 2;
+COMMIT; -- Atomic: both succeed or both fail`},
+        {id:3,question:"What are the different data types in PostgreSQL?",englishAnswer:"Numeric (INT, BIGINT, DECIMAL), Character (CHAR, VARCHAR, TEXT), Boolean, Date/Time (DATE, TIMESTAMP, INTERVAL), Binary (BYTEA), JSON/JSONB, Array, Range types, UUID, Geometric (POINT, POLYGON), and custom types.",banglaAnswer:"সংখ্যাসূচক, ক্যারেক্টার, বুলিয়ান, তারিখ/সময়, বাইনারি, JSON, অ্যারে, রেঞ্জ, UUID, জ্যামিতিক এবং কাস্টম টাইপ।",explanation:"JSONB stores JSON in binary format for efficient indexing. Arrays allow multi-value columns. Range types enable natural representation of intervals.",exampleCode:`CREATE TABLE employees (
+    id INT,
+    name TEXT,
+    salary NUMERIC(10,2),
+    is_active BOOLEAN,
+    metadata JSONB,
+    work_days DATE[],
+    vacation_range DATERANGE
+);`},
+        {id:4,question:"What is MVCC in PostgreSQL? How does it work?",englishAnswer:"MVCC (Multi-Version Concurrency Control) keeps multiple versions of a row. Readers see a snapshot of data at a point in time without blocking writers. It uses transaction ID (xmin, xmax) to determine visibility.",banglaAnswer:"MVCC একটি সারির একাধিক ভার্সন রাখে। রিডাররা একটি নির্দিষ্ট সময়ের স্ন্যাপশট দেখে এবং রাইটারদের ব্লক করে না।",explanation:"Each row has system columns: xmin (creating transaction), xmax (deleting transaction). Visibility is checked against current transaction snapshot. No read locks improve concurrency.",exampleCode:`-- Check row visibility (system columns)
+SELECT xmin, xmax, cmin, cmax, * FROM accounts;
+-- VACUUM cleans dead tuples`},
+        {id:5,question:"Explain indexes in PostgreSQL. Types and best practices.",englishAnswer:"Index types: B-tree (default), Hash, GiST, SP-GiST, GIN, BRIN. B-tree for equality/range. GIN for composite/JSON/arrays. BRIN for large, naturally ordered tables. Best practices: index columns used in WHERE, JOIN, ORDER BY; avoid over-indexing.",banglaAnswer:"ইন্ডেক্স প্রকার: B-tree, Hash, GiST, GIN, BRIN। B-tree সমতা/রেঞ্জের জন্য। GIN JSON/অ্যারের জন্য। BRIN বড়, ক্রমিক টেবিলের জন্য।",explanation:"Partial indexes (WHERE clause) and expression indexes are powerful. Use EXPLAIN to analyze query plans and index usage.",exampleCode:`-- B-tree index
+CREATE INDEX idx_name ON users(last_name);
+-- Partial index
+CREATE INDEX idx_active ON users(email) WHERE is_active = true;
+-- GIN index for JSONB
+CREATE INDEX idx_data ON products USING GIN (attributes);`},
+        {id:6,question:"What are Joins in PostgreSQL? Explain types with examples.",englishAnswer:"INNER JOIN (matching rows), LEFT/RIGHT JOIN (all rows from left/right plus matches), FULL OUTER JOIN (all rows from both), CROSS JOIN (Cartesian product), NATURAL JOIN (automatic on common columns).",banglaAnswer:"INNER JOIN (মিলে যাওয়া সারি), LEFT/RIGHT JOIN (বামে/ডানে সব প্লাস মিল), FULL OUTER JOIN (উভয় পাশের সব), CROSS JOIN (কার্তেসিয়ান গুণফল), NATURAL JOIN (সাধারণ কলামে স্বয়ংক্রিয়)।",explanation:"Self-join: joining a table to itself. Use aliases to avoid ambiguity.",exampleCode:`SELECT e.name, d.name
+FROM employees e
+INNER JOIN departments d ON e.dept_id = d.id;
+-- Left join: all employees even without department
+SELECT e.name, d.name FROM employees e LEFT JOIN departments d ON e.dept_id = d.id;`},
+        {id:7,question:"What is the difference between WHERE and HAVING?",englishAnswer:"WHERE filters rows before grouping (on individual rows). HAVING filters groups after aggregation. HAVING works with aggregate functions (SUM, COUNT, AVG).",banglaAnswer:"WHERE গ্রুপিংয়ের আগে সারি ফিল্টার করে। HAVING অ্যাগ্রিগেশনের পরে গ্রুপ ফিল্টার করে। HAVING অ্যাগ্রিগেট ফাংশনের সাথে কাজ করে।",explanation:"You cannot use aggregate functions in WHERE. Use HAVING for conditions like COUNT(*) > 5.",exampleCode:`-- WHERE before group, HAVING after
+SELECT department, AVG(salary) 
+FROM employees 
+WHERE salary > 30000 
+GROUP BY department 
+HAVING AVG(salary) > 50000;`},
+        {id:8,question:"Explain Common Table Expressions (CTE) with examples.",englishAnswer:"CTE (WITH clause) creates temporary result sets that can be referenced in the main query. Useful for recursive queries, code readability, and breaking complex logic. Recursive CTE uses UNION ALL with anchor and recursive terms.",banglaAnswer:"CTE (WITH ক্লজ) অস্থায়ী রেজাল্ট সেট তৈরি করে যা মূল কোয়েরিতে রেফারেন্স করা যায়। রিকার্সিভ কোয়েরির জন্য অত্যন্ত কার্যকর।",explanation:"CTEs are not materialized by default (except with MATERIALIZED hint). Use for hierarchical data (org charts, category trees).",exampleCode:`-- Non-recursive CTE
+WITH high_salary AS (
+    SELECT name, salary FROM employees WHERE salary > 80000
+)
+SELECT * FROM high_salary;
+-- Recursive CTE for employee hierarchy
+WITH RECURSIVE org AS (
+    SELECT id, name, manager_id, 1 AS level FROM employees WHERE manager_id IS NULL
+    UNION ALL
+    SELECT e.id, e.name, e.manager_id, o.level + 1 FROM employees e JOIN org o ON e.manager_id = o.id
+)
+SELECT * FROM org;`},
+        {id:9,question:"What are Window Functions? Provide examples.",englishAnswer:"Window functions perform calculations across a set of rows related to the current row without collapsing them. Common functions: ROW_NUMBER(), RANK(), DENSE_RANK(), LEAD(), LAG(), SUM() OVER().",banglaAnswer:"উইন্ডো ফাংশন বর্তমান সারির সাথে সম্পর্কিত সারির সেটে গণনা করে, সারি সংকুচিত করে না। ROW_NUMBER(), RANK(), LEAD(), LAG() ইত্যাদি।",explanation:"PARTITION BY divides rows into groups. ORDER BY defines sequence. Useful for running totals, rankings, and comparing with previous rows.",exampleCode:`SELECT name, department, salary,
+    ROW_NUMBER() OVER (PARTITION BY department ORDER BY salary DESC) AS rank_in_dept,
+    AVG(salary) OVER (PARTITION BY department) AS dept_avg,
+    LAG(salary) OVER (ORDER BY hire_date) AS prev_salary
+FROM employees;`},
+        {id:10,question:"What is the difference between DELETE, TRUNCATE, and DROP?",englishAnswer:"DELETE removes rows conditionally (can rollback, slower, fires triggers). TRUNCATE removes all rows quickly (cannot use WHERE, resets storage, minimal logging, can rollback in transaction). DROP removes entire table structure.",banglaAnswer:"DELETE শর্তসাপেক্ষে সারি মুছে ফেলে (রোলব্যাক সম্ভব, ট্রিগার চালায়)। TRUNCATE দ্রুত সব সারি মুছে (WHERE নেই, স্টোরেজ রিসেট)। DROP সম্পূর্ণ টেবিল মুছে ফেলে।",explanation:"TRUNCATE is DDL (Data Definition Language) while DELETE is DML. TRUNCATE cannot be used with WHERE clause.",exampleCode:`-- DELETE (slow, conditional)
+DELETE FROM logs WHERE created_at < '2023-01-01';
+-- TRUNCATE (fast, all rows)
+TRUNCATE TABLE temp_data;
+-- DROP (remove table)
+DROP TABLE obsolete_table;`},
+        {id:11,question:"Explain Views and Materialized Views in PostgreSQL.",englishAnswer:"Views are virtual tables defined by a query. They do not store data; always show latest data. Materialized Views store the query result physically, can be refreshed (CONCURRENTLY) for faster reads but need refresh for updates.",banglaAnswer:"ভিউ ভার্চুয়াল টেবিল, ডেটা সংরক্ষণ করে না। মেটিরিয়ালাইজড ভিউ কোয়েরি ফলাফল শারীরিকভাবে সংরক্ষণ করে, দ্রুত রিড দিতে পারে কিন্তু রিফ্রেশ প্রয়োজন।",explanation:"Materialized views are useful for data warehousing and heavy analytical queries. REFRESH MATERIALIZED VIEW CONCURRENTLY refreshes without locking reads.",exampleCode:`-- Regular view
+CREATE VIEW active_users AS SELECT * FROM users WHERE last_login > NOW() - INTERVAL '30 days';
+-- Materialized view
+CREATE MATERIALIZED VIEW sales_summary AS SELECT product_id, SUM(quantity) FROM orders GROUP BY product_id;
+REFRESH MATERIALIZED VIEW CONCURRENTLY sales_summary;`},
+        {id:12,question:"What is PL/pgSQL? Write a function example.",englishAnswer:"PL/pgSQL is PostgreSQL's procedural language (similar to Oracle's PL/SQL). It supports variables, loops, conditionals, error handling, and returning results. Used for complex business logic inside the database.",banglaAnswer:"PL/pgSQL PostgreSQL এর প্রসিডিউরাল ল্যাঙ্গুয়েজ। এটি ভেরিয়েবল, লুপ, কন্ডিশনাল, এরর হ্যান্ডলিং সমর্থন করে। জটিল বিজনেস লজিক ডাটাবেজের ভিতরে লেখার জন্য ব্যবহৃত হয়।",explanation:"Functions can return scalar, table, or SETOF records. Language SQL is simpler but less powerful.",exampleCode:`CREATE OR REPLACE FUNCTION get_employee_bonus(emp_id INT) RETURNS NUMERIC AS $$
+DECLARE
+    emp_salary NUMERIC;
+    bonus NUMERIC;
+BEGIN
+    SELECT salary INTO emp_salary FROM employees WHERE id = emp_id;
+    IF emp_salary > 100000 THEN
+        bonus := emp_salary * 0.10;
+    ELSE
+        bonus := emp_salary * 0.05;
+    END IF;
+    RETURN bonus;
+END;
+$$ LANGUAGE plpgsql;`},
+        {id:13,question:"Explain PostgreSQL indexing methods: B-tree, GIN, GiST, BRIN.",englishAnswer:"B-tree: balanced tree for equality and range queries. GIN: inverted index for composite types (arrays, JSON, full-text). GiST: generalized search tree for geometric/range data. BRIN: block range index for large, sequentially ordered tables.",banglaAnswer:"B-tree: সমতা ও রেঞ্জের জন্য। GIN: অ্যারে/JSON/ফুল-টেক্সটের জন্য। GiST: জ্যামিতিক/রেঞ্জ ডেটার জন্য। BRIN: বড়, ক্রমিক টেবিলের জন্য।",explanation:"Choose index type based on data and query patterns. BRIN is very space-efficient but slower for point queries.",exampleCode:`-- GIN for full-text search
+CREATE INDEX idx_fts ON articles USING GIN(to_tsvector('english', content));
+-- GiST for geometric
+CREATE INDEX idx_location ON places USING GiST(location);
+-- BRIN for timestamp on large table
+CREATE INDEX idx_created_brin ON logs USING BRIN(created_at);`},
+        {id:14,question:"What are triggers in PostgreSQL? Provide an example.",englishAnswer:"Triggers are functions that execute automatically before/after an event (INSERT, UPDATE, DELETE) on a table. They enforce business rules, auditing, or maintain derived data. Use with CREATE TRIGGER.",banglaAnswer:"ট্রিগার হলো ফাংশন যা টেবিলে INSERT, UPDATE, DELETE ইভেন্টের আগে/পরে স্বয়ংক্রিয়ভাবে চলে। বিজনেস রুল, অডিটিং বা ডিরাইভড ডেটা রক্ষণাবেক্ষণ করে।",explanation:"Triggers can be row-level (for each row) or statement-level. Use AFTER triggers for auditing, BEFORE triggers for validation/modification.",exampleCode:`-- Create trigger function
+CREATE OR REPLACE FUNCTION update_modified_column() RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+-- Attach trigger to table
+CREATE TRIGGER trigger_update_timestamp BEFORE UPDATE ON users
+FOR EACH ROW EXECUTE FUNCTION update_modified_column();`},
+        {id:15,question:"What is the role of VACUUM and ANALYZE?",englishAnswer:"VACUUM reclaims storage occupied by dead tuples (from updates/deletes). ANALYZE updates statistics for the query planner. VACUUM FULL reclaims space and compacts the table (locks). AUTO-VACUUM runs automatically in modern PostgreSQL.",banglaAnswer:"VACUUM মৃত টাপল দ্বারা দখলকৃত স্টোরেজ পুনরুদ্ধার করে। ANALYZE কোয়েরি প্ল্যানারের জন্য পরিসংখ্যান আপডেট করে।",explanation:"Regular VACUUM prevents transaction ID wraparound and bloat. Use VACUUM VERBOSE to monitor.",exampleCode:`-- Basic vacuum and analyze
+VACUUM ANALYZE users;
+-- Full vacuum (locks table, reclaims space)
+VACUUM FULL VERBOSE users;
+-- Check table bloat
+SELECT schemaname, relname, n_live_tup, n_dead_tup FROM pg_stat_user_tables;`},
+        {id:16,question:"Explain partitioning in PostgreSQL. Types and benefits.",englishAnswer:"Partitioning splits a large table into smaller physical pieces. Types: Range (date ranges), List (explicit values), Hash (consistent distribution). Benefits: improved query performance, easier data retention, parallel scans.",banglaAnswer:"পার্টিশনিং একটি বড় টেবিলকে ছোট ভৌত খণ্ডে বিভক্ত করে। প্রকার: রেঞ্জ, লিস্ট, হ্যাশ। সুবিধা: উন্নত পারফরম্যান্স, সহজ ডেটা ধারণ, প্যারালাল স্ক্যান।",explanation:"Use declarative partitioning (PostgreSQL 10+). Each partition inherits from main table. Partition pruning skips irrelevant partitions.",exampleCode:`-- Range partition on date
+CREATE TABLE orders (id SERIAL, order_date DATE, amount NUMERIC) PARTITION BY RANGE (order_date);
+CREATE TABLE orders_2024 PARTITION OF orders FOR VALUES FROM ('2024-01-01') TO ('2025-01-01');
+CREATE TABLE orders_2025 PARTITION OF orders FOR VALUES FROM ('2025-01-01') TO ('2026-01-01');`},
+        {id:17,question:"How does PostgreSQL handle full-text search?",englishAnswer:"Full-text search uses to_tsvector (document) and to_tsquery (query) with GIN indexes. Supports stemming, ranking, stop words, and dictionaries. Functions: ts_rank, ts_headline for highlighting.",banglaAnswer:"পূর্ণ-পাঠ্য অনুসন্ধান to_tsvector ও to_tsquery ব্যবহার করে GIN ইনডেক্সের সাথে। স্টেমিং, র্যাঙ্কিং, স্টপ ওয়ার্ড সমর্থন করে।",explanation:"Use websearch_to_tsquery for Google-like syntax. Supports multiple languages via configuration.",exampleCode:`-- Create index
+CREATE INDEX idx_search ON articles USING GIN(to_tsvector('english', title || ' ' || body));
+-- Search query
+SELECT title, ts_rank(to_tsvector(body), query) AS rank
+FROM articles, websearch_to_tsquery('english', 'postgreSQL performance tips') query
+WHERE to_tsvector('english', body) @@ query
+ORDER BY rank DESC;`},
+        {id:18,question:"What are the different isolation levels in PostgreSQL?",englishAnswer:"PostgreSQL supports four isolation levels: READ UNCOMMITTED (acts like READ COMMITTED), READ COMMITTED (default), REPEATABLE READ, SERIALIZABLE. SERIALIZABLE uses SSI (Serializable Snapshot Isolation) for true serializability.",banglaAnswer:"PostgreSQL চারটি আইসোলেশন লেভেল সমর্থন করে: READ COMMITTED (ডিফল্ট), REPEATABLE READ, SERIALIZABLE।",explanation:"PostgreSQL's REPEATABLE READ prevents non-repeatable reads and phantom reads but allows serialization anomalies. Use SERIALIZABLE for full correctness but may need retry logic.",exampleCode:`-- Set isolation level
+BEGIN ISOLATION LEVEL SERIALIZABLE;
+UPDATE accounts SET balance = balance - 100 WHERE id = 1;
+UPDATE accounts SET balance = balance + 100 WHERE id = 2;
+COMMIT;
+-- Handle serialization failure
+BEGIN; SET TRANSACTION ISOLATION LEVEL SERIALIZABLE; ... COMMIT;`},
+        {id:19,question:"Explain the difference between UNION, INTERSECT, and EXCEPT.",englishAnswer:"UNION combines results and removes duplicates (UNION ALL keeps duplicates). INTERSECT returns rows common to both queries. EXCEPT returns rows from first query not in second. All require same number of columns and compatible types.",banglaAnswer:"UNION ফলাফল একত্রিত করে ও ডুপ্লিকেট সরায়। INTERSECT উভয় কোয়েরিতে সাধারণ সারি রিটার্ন করে। EXCEPT প্রথম কোয়েরির সারি যা দ্বিতীয়টিতে নেই রিটার্ন করে।",explanation:"These set operators are powerful for data comparison and deduplication across tables.",exampleCode:`-- Customers who are also employees
+SELECT name FROM customers INTERSECT SELECT name FROM employees;
+-- Products sold in 2024 but not in 2025
+SELECT product_id FROM orders_2024 EXCEPT SELECT product_id FROM orders_2025;`},
+        {id:20,question:"What is the query planner and how to use EXPLAIN?",englishAnswer:"The query planner analyzes SQL and generates an execution plan. EXPLAIN shows the plan without running it; EXPLAIN ANALYZE runs and shows actual timing. Key nodes: Seq Scan (full table), Index Scan, Nested Loop, Hash Join, Merge Join.",banglaAnswer:"কোয়েরি প্ল্যানার SQL বিশ্লেষণ করে এক্সিকিউশন প্ল্যান তৈরি করে। EXPLAIN প্ল্যান দেখায়, EXPLAIN ANALYZE চালায় ও প্রকৃত সময় দেখায়।",explanation:"Look for expensive operations like Seq Scan on large tables. Use indexes to convert Seq Scan to Index Scan.",exampleCode:`-- Analyze query plan
+EXPLAIN (ANALYZE, BUFFERS, VERBOSE) SELECT * FROM orders WHERE customer_id = 123;
+-- Check index usage
+EXPLAIN SELECT * FROM users WHERE last_name = 'Smith'; -- should show Index Scan`},
+        {id:21,question:"Explain PostgreSQL's WAL (Write-Ahead Logging).",englishAnswer:"WAL logs every change before it's written to data files. Ensures durability (crash recovery) and enables replication (streaming replication, logical replication). WAL files are archived for Point-In-Time Recovery (PITR).",banglaAnswer:"WAL প্রতিটি পরিবর্তন ডেটা ফাইলে লেখার আগে লগ করে। এটি ডিউরেবিলিটি নিশ্চিত করে এবং রেপ্লিকেশন সক্রিয় করে।",explanation:"WAL configuration parameters: wal_level, max_wal_senders, archive_mode. Logical decoding extracts changes in human-readable format.",exampleCode:`-- Check WAL settings
+SHOW wal_level; -- replica or logical for replication
+-- Archive WAL (in postgresql.conf)
+archive_mode = on
+archive_command = 'cp %p /archive/%f'`},
+        {id:22,question:"What are replication methods in PostgreSQL?",englishAnswer:"Streaming Physical Replication (primary-replica for failover, full cluster copy). Logical Replication (publish-subscribe on specific tables, cross-version). Cascading Replication. Bi-directional replication (pglogical). Sync vs Async replication.",banglaAnswer:"স্ট্রিমিং ফিজিক্যাল রেপ্লিকেশন (পুরো ক্লাস্টার কপি)। লজিক্যাল রেপ্লিকেশন (নির্দিষ্ট টেবিল, ক্রস-ভার্সন)। সিঙ্ক বনাম অ্যাসিঙ্ক।",explanation:"Use streaming replication for high availability (Patroni, repmgr). Logical replication for selective data sharing, upgrades, or microservices.",exampleCode:`-- Primary: create replication user
+CREATE USER repl WITH REPLICATION LOGIN PASSWORD 'pass';
+-- Primary: pg_hba.conf entry
+host replication repl 192.168.1.0/24 md5
+-- Replica: pg_basebackup
+pg_basebackup -h primary_ip -D /var/lib/postgresql/data -U repl -P`},
+        {id:23,question:"Explain Foreign Data Wrappers (FDW) with example.",englishAnswer:"FDW allows PostgreSQL to access external data sources (other PostgreSQL, MySQL, MongoDB, files, REST APIs) as foreign tables. Use CREATE FOREIGN TABLE to define structure, then query normally.",banglaAnswer:"FDW PostgreSQL কে বহিরাগত ডেটা সোর্স অ্যাক্সেস করতে দেয়। CREATE FOREIGN TABLE দিয়ে স্ট্রাকচার সংজ্ঞায়িত করে সাধারণ SQL চালানো যায়।",explanation:"Popular FDWs: postgres_fdw (cross-database joins), mysql_fdw, file_fdw (CSV files). Supports pushdown of WHERE clauses.",exampleCode:`-- Install extension
+CREATE EXTENSION postgres_fdw;
+CREATE SERVER remote_server FOREIGN DATA WRAPPER postgres_fdw OPTIONS (host 'remote_host', dbname 'remote_db');
+CREATE USER MAPPING FOR current_user SERVER remote_server OPTIONS (user 'remote_user', password 'pass');
+CREATE FOREIGN TABLE remote_users (id INT, name TEXT) SERVER remote_server OPTIONS (table_name 'users');
+SELECT * FROM remote_users JOIN local_table ON ...;`},
+        {id:24,question:"What are sequences and serial data types?",englishAnswer:"Sequences generate unique numeric values (auto-increment). SERIAL, BIGSERIAL, SMALLSERIAL create an integer column with default nextval('seq_name'). Identity columns (GENERATED AS IDENTITY) are standard SQL and preferred.",banglaAnswer:"সিকোয়েন্স অনন্য সংখ্যাসূচক মান তৈরি করে। SERIAL টাইপ স্বয়ংক্রিয়ভাবে সিকোয়েন্স তৈরি করে। আইডেন্টিটি কলাম (GENERATED AS IDENTITY) অধিক মানসম্মত।",explanation:"SERIAL is legacy; IDENTITY columns are SQL standard and offer more control (ALWAYS vs BY DEFAULT).",exampleCode:`-- Using SERIAL (old)
+CREATE TABLE t1 (id SERIAL PRIMARY KEY, name TEXT);
+-- Using IDENTITY (recommended)
+CREATE TABLE t2 (id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, name TEXT);
+-- Manual sequence
+CREATE SEQUENCE order_seq START 1000;
+CREATE TABLE orders (id INT DEFAULT nextval('order_seq'), ...);`},
+        {id:25,question:"How to handle JSON data in PostgreSQL?",englishAnswer:"JSON (text) and JSONB (binary, indexed) types support operations: -> (JSON object field), ->> (text), @> (contains), ? (key exists). JSONB supports GIN indexing for fast queries.",banglaAnswer:"JSON (পাঠ্য) ও JSONB (বাইনারি, ইনডেক্সযোগ্য) টাইপ। JSONB GIN ইনডেক্স দ্রুত কোয়েরির জন্য।",explanation:"Use JSONB for most use cases. Supports nested path queries and partial updates via jsonb_set.",exampleCode:`-- Create and query JSONB
+CREATE TABLE events (data JSONB);
+INSERT INTO events VALUES ('{"user": "alice", "action": "login", "details": {"ip": "192.168.1.1"}}');
+-- Query
+SELECT data->>'user' FROM events WHERE data @> '{"action": "login"}';
+SELECT data->'details'->>'ip' FROM events;
+-- GIN index
+CREATE INDEX idx_gin ON events USING GIN(data);`},
+        {id:26,question:"Explain PostgreSQL's locking mechanisms.",englishAnswer:"Lock types: Row-level (SELECT FOR UPDATE, FOR SHARE), Table-level (ACCESS SHARE, ROW EXCLUSIVE, ACCESS EXCLUSIVE), Advisory locks (application-level). Deadlocks are automatically detected and resolved.",banglaAnswer:"লক প্রকার: রো-লেভেল (SELECT FOR UPDATE), টেবিল-লেভেল (ACCESS SHARE, ACCESS EXCLUSIVE), অ্যাডভাইজরি লক। ডেডলক স্বয়ংক্রিয়ভাবে সনাক্ত ও সমাধান হয়।",explanation:"SELECT FOR UPDATE locks rows to prevent concurrent modifications. Locks are released at transaction commit.",exampleCode:`-- Row-level lock
+BEGIN;
+SELECT * FROM inventory WHERE product_id = 10 FOR UPDATE;
+UPDATE inventory SET stock = stock - 1 WHERE product_id = 10;
+COMMIT;
+-- See current locks
+SELECT relation::regclass, mode, transactionid FROM pg_locks WHERE NOT granted;`},
+        {id:27,question:"What are roles, users, and privileges in PostgreSQL?",englishAnswer:"Roles are entities that can own objects and have privileges. Users are roles with LOGIN permission. Privileges: SELECT, INSERT, UPDATE, DELETE, USAGE, ALL. GRANT and REVOKE manage permissions.",banglaAnswer:"রোল হলো সত্তা যাদের অবজেক্ট ও অধিকার থাকতে পারে। ইউজার হলো LOGIN পারমিশনসহ রোল। GRANT/REVOKE দিয়ে অনুমতি ব্যবস্থাপনা।",explanation:"Use role inheritance for hierarchical permissions. Create groups with NOLOGIN and grant membership to users.",exampleCode:`-- Create role and user
+CREATE ROLE app_readonly NOLOGIN;
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO app_readonly;
+CREATE USER alice WITH LOGIN PASSWORD 'pass' IN ROLE app_readonly;
+-- Grant specific privileges
+GRANT INSERT, UPDATE ON employees TO hr_manager;
+REVOKE DELETE ON employees FROM hr_manager;`},
+        {id:28,question:"Explain the difference between INNER JOIN and EXISTS.",englishAnswer:"INNER JOIN returns rows that have matching rows in both tables, potentially duplicating left table rows. EXISTS returns a boolean (true/false) without duplication and stops scanning after first match; often faster for existence checks.",banglaAnswer:"INNER JOIN উভয় টেবিলে মিল থাকা সারি রিটার্ন করে, ডুপ্লিকেট করতে পারে। EXISTS বুলিয়ান রিটার্ন করে, প্রথম মিলেই থামে।",explanation:"Use EXISTS when you only need to check existence. Use INNER JOIN when you need columns from the joined table.",exampleCode:`-- EXISTS (more efficient for large tables)
+SELECT * FROM customers c WHERE EXISTS (SELECT 1 FROM orders o WHERE o.customer_id = c.id);
+-- INNER JOIN (may duplicate customers with multiple orders)
+SELECT DISTINCT c.* FROM customers c JOIN orders o ON c.id = o.customer_id;`},
+        {id:29,question:"What are recursive queries used for? Provide example.",englishAnswer:"Recursive queries (WITH RECURSIVE) solve hierarchical problems: organization charts, category trees, bill of materials, graph traversal (shortest path). Consists of anchor (base) and recursive term UNION ALL.",banglaAnswer:"রিকার্সিভ কোয়েরি (WITH RECURSIVE) হায়ারার্কিক্যাল সমস্যা সমাধান করে: অর্গানাইজেশন চার্ট, ক্যাটাগরি ট্রি, গ্রাফ ট্রাভার্সাল।",explanation:"Recursion depth is limited by max_stack_depth. Use cycle detection for graph with cycles.",exampleCode:`-- Tree traversal (category hierarchy)
+WITH RECURSIVE category_tree AS (
+    SELECT id, name, parent_id, 1 as depth FROM categories WHERE parent_id IS NULL
+    UNION ALL
+    SELECT c.id, c.name, c.parent_id, ct.depth + 1 FROM categories c JOIN category_tree ct ON c.parent_id = ct.id
+)
+SELECT * FROM category_tree;`},
+        {id:30,question:"How to optimize performance in PostgreSQL? Give 5 tips.",englishAnswer:"1. Use proper indexes (EXPLAIN to verify). 2. Normalize/denormalize judiciously. 3. Partition large tables. 4. Tune postgresql.conf: shared_buffers, effective_cache_size, work_mem. 5. Vacuum regularly and monitor dead tuples.",banglaAnswer:"1. সঠিক ইন্ডেক্স ব্যবহার। 2. স্বাভাবিকীকরণ/অস্বাভাবিকীকরণ বিচক্ষণতার সাথে। 3. বড় টেবিল পার্টিশন। 4. postgresql.conf টিউন। 5. নিয়মিত ভ্যাকুয়াম ও মনিটরিং।",explanation:"Use pg_stat_statements to find slow queries. Monitor connection pooling (PgBouncer). Enable query logging (log_min_duration_statement).",exampleCode:`-- Find slow queries
+CREATE EXTENSION pg_stat_statements;
+SELECT query, calls, mean_time, max_time FROM pg_stat_statements ORDER BY mean_time DESC LIMIT 5;
+-- Set parameters (postgresql.conf)
+shared_buffers = '25% RAM', effective_cache_size = '75% RAM', work_mem = '10MB'`},
+        {id:31,question:"What is the difference between VARCHAR and TEXT in PostgreSQL?",englishAnswer:"VARCHAR(n) stores variable-length string with length limit; TEXT has no theoretical limit. Performance is identical. Use VARCHAR(n) when you need a constraint, TEXT otherwise. CHAR(n) pads with spaces.",banglaAnswer:"VARCHAR(n) দৈর্ঘ্য সীমাবদ্ধ টেক্সট, TEXT অসীম (থিওরেটিক্যাল)। পারফরম্যান্স অভিন্ন। CHAR(n) স্পেস দিয়ে প্যাড করে।",explanation:"PostgreSQL treats VARCHAR and TEXT the same internally except for length constraint check. No performance penalty for TEXT.",exampleCode:`-- Both are efficient
+CREATE TABLE demo (code VARCHAR(10), description TEXT);
+INSERT INTO demo VALUES ('ABC', 'Any length string goes here without truncation');`},
+        {id:32,question:"Explain PostgreSQL's array data type with example.",englishAnswer:"PostgreSQL supports arrays of any data type. Use ANY, ALL, && (overlap), @> (contains) operators. Index with GIN for fast membership tests.",banglaAnswer:"PostgreSQL যেকোনো ডেটা টাইপের অ্যারে সমর্থন করে। GIN ইনডেক্স দ্রুত সদস্যপদ পরীক্ষার জন্য।",explanation:"Arrays are stored as variable-length varlena. Use unnest() to expand array to rows.",exampleCode:`-- Create and query array
+CREATE TABLE products (id INT, tags TEXT[]);
+INSERT INTO products VALUES (1, ARRAY['electronics', 'sale']);
+SELECT * FROM products WHERE 'sale' = ANY(tags);
+SELECT * FROM products WHERE tags @> ARRAY['electronics', 'sale'];
+-- GIN index for array
+CREATE INDEX idx_tags ON products USING GIN(tags);`},
+        {id:33,question:"What are event triggers and how are they different from regular triggers?",englishAnswer:"Event triggers fire on DDL events (CREATE, ALTER, DROP) rather than DML. Regular triggers fire on row/statement changes. Event triggers can be used for auditing schema changes, preventing destructive DDL, or logging.",banglaAnswer:"ইভেন্ট ট্রিগার DDL ইভেন্টে চালিত হয় (CREATE, ALTER, DROP)। রেগুলার ট্রিগার DML ইভেন্টে চালিত হয়।",explanation:"Event triggers are defined at the database level and have no per-row concept. Use ddl_command_end for detailed info.",exampleCode:`-- Create event trigger function
+CREATE OR REPLACE FUNCTION log_ddl() RETURNS EVENT_TRIGGER AS $$
+BEGIN
+    INSERT INTO ddl_audit (user, command, when) VALUES (current_user, current_query(), now());
+END;
+$$ LANGUAGE plpgsql;
+CREATE EVENT TRIGGER log_ddl_trigger ON ddl_command_end EXECUTE FUNCTION log_ddl();`},
+        {id:34,question:"Explain the concept of 'data types' casting and conversion.",englishAnswer:"Casting converts one data type to another. Implicit (automatic, e.g., INT to TEXT), explicit using CAST() or :: syntax. Safe casts (INT to BIGINT), unsafe (TEXT to INT may fail). Use TRY_CAST (via user-defined function) for graceful failure.",banglaAnswer:"কাস্টিং এক ডেটা টাইপকে অন্যে রূপান্তরিত করে। ইমপ্লিসিট (স্বয়ংক্রিয়), এক্সপ্লিসিট CAST() অথবা :: ব্যবহার করে।",explanation:"Use CAST(text AS integer) for conversion. Be careful of rounding with NUMERIC to INT.",exampleCode:`-- Explicit cast
+SELECT '123'::INTEGER, CAST('2025-01-15' AS DATE);
+-- Cast with error handling
+SELECT CASE WHEN 'abc' ~ '^[0-9]+$' THEN 'abc'::INTEGER ELSE NULL END AS safe_int;`},
+        {id:35,question:"What are aggregate functions and how to create custom aggregates?",englishAnswer:"Built-in aggregates: SUM, AVG, COUNT, MIN, MAX, STRING_AGG, ARRAY_AGG. Custom aggregates require state transition function (SFUNC), initial condition (STYPE), and optional final function (FINALFUNC).",banglaAnswer:"বিল্ট-ইন অ্যাগ্রিগেট: SUM, AVG, COUNT, STRING_AGG। কাস্টম অ্যাগ্রিগেটের জন্য SFUNC, STYPE, FINALFUNC প্রয়োজন।",explanation:"Custom aggregates are useful for complex accumulations like geometric mean, median, or mode.",exampleCode:`-- Custom aggregate for geometric mean
+CREATE OR REPLACE FUNCTION geom_mean_sfunc(state NUMERIC, value NUMERIC) RETURNS NUMERIC AS $$
+BEGIN
+    RETURN state * value;
+END;
+$$ LANGUAGE plpgsql;
+CREATE OR REPLACE FUNCTION geom_mean_final(state NUMERIC, n INT) RETURNS NUMERIC AS $$
+BEGIN
+    RETURN state ^ (1.0 / n);
+END;
+$$ LANGUAGE plpgsql;
+CREATE AGGREGATE geometric_mean(NUMERIC) (
+    SFUNC = geom_mean_sfunc,
+    STYPE = NUMERIC,
+    INITCOND = 1,
+    FINALFUNC = geom_mean_final,
+    FINALFUNC_EXTRA
+);`}
+    ];
+
+    const container = document.getElementById('questions-container');
+    
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+    
+    function renderQuestions() {
+        let html = '';
+        questionsData.forEach(q => {
+            const qId = `q${q.id}`;
+            html += `
+                <div class="question-card" id="${qId}">
+                    <div class="question-title">
+                        <h2><span class="q-num">${q.id}</span> ${escapeHtml(q.question)}</h2>
+                    </div>
+                    <div class="toggle-group">
+                        <button class="toggle-btn eng-btn" data-target="eng-${qId}">🇬🇧 English Answer</button>
+                        <button class="toggle-btn ban-btn" data-target="ban-${qId}">🇧🇩 বাংলা উত্তর</button>
+                        <button class="toggle-btn exp-btn" data-target="exp-${qId}">📖 Explanation</button>
+                        <button class="toggle-btn code-btn" data-target="code-${qId}">💻 Example Code</button>
+                    </div>
+                    <div id="eng-${qId}" class="content-panel answer-text"><p>${escapeHtml(q.englishAnswer)}</p></div>
+                    <div id="ban-${qId}" class="content-panel answer-text bangla-answer"><p>${escapeHtml(q.banglaAnswer)}</p></div>
+                    <div id="exp-${qId}" class="content-panel explanation-text"><p>${escapeHtml(q.explanation)}</p></div>
+                    <div id="code-${qId}" class="content-panel code-text"><pre><code>${escapeHtml(q.exampleCode)}</code></pre></div>
+                </div>
+            `;
+        });
+        container.innerHTML = html;
+        
+        document.querySelectorAll('.toggle-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const targetId = this.getAttribute('data-target');
+                const targetPanel = document.getElementById(targetId);
+                if (targetPanel) {
+                    targetPanel.classList.toggle('show');
+                    this.classList.toggle('active');
+                }
+            });
+        });
+    }
+    
+    renderQuestions();
+</script>
+</body>
+</html>
