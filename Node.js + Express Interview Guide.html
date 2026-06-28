@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Node.js + Express Engine | Technical Interview Prep</title>
+    <title>Node.js & Express | Technical Interview Prep</title>
     <!-- Google Fonts: Outfit for sleek modern UI, JetBrains Mono for tags/code -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -344,6 +344,8 @@
             align-items: center;
             gap: 0.75rem;
             line-height: 1.4;
+            flex: 1 1 auto;
+            min-width: 0;
         }
 
         .q-num {
@@ -513,6 +515,59 @@
             color: var(--text-secondary);
             font-size: 0.85rem;
         }
+
+        /* Mobile fine-tuning: question text was oversized/cramped on phones */
+        @media (max-width: 600px) {
+            body {
+                padding: 1.5rem 1rem;
+            }
+
+            .card-header-wrapper {
+                padding: 0.9rem 1rem;
+                gap: 0.6rem;
+            }
+
+            .question-title-text {
+                font-size: 0.92rem;
+                line-height: 1.4;
+                gap: 0.55rem;
+            }
+
+            .q-num {
+                width: 22px;
+                height: 22px;
+                font-size: 0.7rem;
+            }
+
+            .learned-toggle-btn {
+                font-size: 0.65rem;
+                padding: 0.35rem 0.6rem;
+                gap: 0.25rem;
+            }
+
+            .learned-toggle-btn svg {
+                width: 12px;
+                height: 12px;
+            }
+
+            .toggle-group {
+                padding: 0.7rem 1rem;
+                gap: 0.4rem;
+            }
+
+            .toggle-btn {
+                font-size: 0.72rem;
+                padding: 0.35rem 0.7rem;
+            }
+
+            .content-panel.show {
+                padding: 1rem;
+            }
+
+            .content-panel p {
+                font-size: 0.88rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -533,7 +588,7 @@
                 <span></span>
                 EXPERT INTERVIEW ENGINE
             </div>
-            <h1>Node.js + Express Engine</h1>
+            <h1>Node.js & Express</h1>
             <p class="subtitle">Comprehensive questions with English & Bengali answers, explanations, and code examples</p>
             <div class="badge-list">
                 <span class="topic-badge">Event Loop</span>
@@ -555,8 +610,10 @@
                     </svg>
                     <span>Learning Progress</span>
                 </div>
-                <div class="progress-stats" id="progress-text">0 of 35 Mastered</div>
-                <div class="progress-stats" id="progress-percent" style="margin-left: 0.5rem;">0%</div>
+                <div style="display:flex; align-items:center;">
+                    <div class="progress-stats" id="progress-text">0 of 35 Mastered</div>
+                    <div class="progress-stats" id="progress-percent" style="margin-left: 0.5rem;">0%</div>
+                </div>
             </div>
             <div class="progress-bar-container">
                 <div class="progress-bar-fill" id="progress-bar-fill"></div>
@@ -570,7 +627,7 @@
                 <button class="filter-btn" data-filter="learned">Learned</button>
                 <button class="filter-btn" data-filter="unlearned">Unlearned</button>
             </div>
-            
+
             <div class="actions-bar">
                 <button class="action-btn" onclick="expandAll()">Expand All</button>
                 <button class="action-btn" onclick="collapseAll()">Collapse All</button>
@@ -586,14 +643,14 @@
 
         <!-- Questions container -->
         <div class="questions-list" id="questions-container"></div>
-        
+
         <div class="no-results" id="no-results-panel">
             <h3>No questions found</h3>
             <p>Try refining your search or filter options.</p>
         </div>
 
         <footer>
-            <p>Click any toggle button to reveal answer, explanation, or code — master Node.js + Express for your interview!</p>
+            <p>Click any toggle button to reveal answer, explanation, or code — master Node.js & Express for your interview!</p>
         </footer>
     </div>
 
@@ -606,7 +663,7 @@
         {id:5,question:"How do you handle routing in Express?",englishAnswer:"Express routing refers to how an application's endpoints (URIs) respond to client requests. You can define routes using HTTP methods: app.get(), app.post(), app.put(), app.delete(), etc. Routes can include route parameters, query strings, and regular expressions.",banglaAnswer:"এক্সপ্রেস রাউটিং নির্ধারণ করে কিভাবে অ্যাপ্লিকেশন এন্ডপয়েন্ট ক্লায়েন্ট রিকোয়েস্টের সাড়া দেয়। HTTP মেথড ব্যবহার করে রুট ডিফাইন করা যায়।",explanation:"Use express.Router() to create modular route handlers. Route parameters are named URL segments prefixed with colon (:id). Query strings provide additional options.",exampleCode:"const router = express.Router();\n\n// Route parameters\napp.get('/users/:userId/books/:bookId', (req, res) => {\n  const { userId, bookId } = req.params;\n  res.json({ userId, bookId });\n});\n\n// Query parameters\napp.get('/search', (req, res) => {\n  const { q, limit = 10, page = 1 } = req.query;\n  res.json({ query: q, limit, page });\n});\n\n// Modular routes\nrouter.get('/profile', (req, res) => res.json({ user: 'John' }));\napp.use('/api', router);"},
         {id:6,question:"What's the difference between process.nextTick() and setImmediate()?",englishAnswer:"process.nextTick() executes callbacks at the end of the current operation before the event loop continues, with higher priority. setImmediate() executes callbacks in the 'check' phase of the event loop, after I/O events. nextTick has higher priority than setImmediate.",banglaAnswer:"process.nextTick() বর্তমান অপারেশন শেষে ইভেন্ট লুপ চলার আগে কলব্যাক এক্সিকিউট করে। setImmediate() I/O ইভেন্টের পরে 'চেক' ফেজে কলব্যাক এক্সিকিউট করে।",explanation:"Excessive use of nextTick can starve I/O. Use setImmediate for recursive async operations to prevent stack overflow.",exampleCode:"// Order of execution\nsetImmediate(() => console.log('setImmediate'));\nsetTimeout(() => console.log('setTimeout'), 0);\nprocess.nextTick(() => console.log('nextTick'));\nconsole.log('console');\n// Output: console, nextTick, setTimeout, setImmediate"},
         {id:7,question:"Explain non-blocking I/O in Node.js.",englishAnswer:"Non-blocking I/O allows Node.js to initiate an I/O operation and immediately continue executing other code without waiting for the operation to complete. When the I/O finishes, a callback is queued to the event loop. This enables high concurrency with a single thread.",banglaAnswer:"নন-ব্লকিং I/O Node.js কে I/O অপারেশন শুরু করতে এবং তা শেষ হওয়ার অপেক্ষা না করে অন্যান্য কোড এক্সিকিউট করতে দেয়।",explanation:"Node.js uses libuv to handle async I/O. Always prefer asynchronous methods (fs.readFile) over synchronous ones (fs.readFileSync) in production.",exampleCode:"const fs = require('fs');\n\n// Non-blocking\nconsole.log('Start reading');\nfs.readFile('file.txt', 'utf8', (err, data) => {\n  if (err) throw err;\n  console.log('File content:', data);\n});\nconsole.log('Continue execution');\n\n// Output: 'Start reading', 'Continue execution', then 'File content'"},
-        {id:8,question:"How to handle errors in Express applications?",englishAnswer:"In Express, error-handling middleware is defined with four parameters (err, req, res, next). Synchronous errors are caught automatically. For async code, always pass errors to next(). Use try-catch with async/await or use packages like express-async-errors.",banglaAnswer:"এক্সপ্রেসে এরর-হ্যান্ডলিং মিডলওয়্যার চার প্যারামিটার নেয়। সিনক্রোনাস এরর অটোমেটিক ধরা পড়ে। অ্যাসিঙ্ক কোডের জন্য next() এ এরর পাঠান।",explanation:"Always place error-handling middleware after all route definitions. Handle uncaught exceptions and unhandled rejections globally.",exampleCode:"// Async error handling\napp.get('/user/:id', async (req, res, next) => {\n  try {\n    const user = await getUserById(req.params.id);\n    if (!user) {\n      return res.status(404).json({ error: 'User not found' });\n    }\n    res.json(user);\n  } catch (err) { \n    next(err); // Pass to error handler\n  }\n});\n\n// Central error handler\napp.use((err, req, res, next) => {\n  console.error(err.stack);\n  const status = err.status || 500;\n  res.status(status).json({\n    error: err.message || 'Internal Server Error'\n  });\n});\n\n// Global handlers\nprocess.on('uncaughtException', (err) => {\n  console.error('Uncaught Exception:', err);\n  process.exit(1);\n});\n\nprocess.on('unhandledRejection', (reason, promise) => {\n  console.error('Unhandled Rejection:', reason);\n});"},
+        {id:8,question:"How to handle errors in Express applications?",englishAnswer:"In Express, error-handling middleware is defined with four parameters (err, req, res, next). Synchronous errors are caught automatically. For async code, always pass errors to next(). Use try-catch with async/await or use packages like express-async-errors.",banglaAnswer:"এক্সপ্রেসে এরর-হ্যান্ডলিং মিডলওয়্যার চার প্যারামিটার নেয়। সিনক্রোনাস এরর অটোমেটিক ধরা পড়ে। অ্যাসিঙ্ক কোডের জন্য next() এ এরর পাঠান।",explanation:"Always place error-handling middleware after all route definitions. Handle uncaught exceptions and unhandled rejections globally.",exampleCode:"// Async error handling\napp.get('/user/:id', async (req, res, next) => {\n  try {\n    const user = await getUserById(req.params.id);\n    if (!user) {\n      return res.status(404).json({ error: 'User not found' });\n    }\n    res.json(user);\n  } catch (err) {\n    next(err); // Pass to error handler\n  }\n});\n\n// Central error handler\napp.use((err, req, res, next) => {\n  console.error(err.stack);\n  const status = err.status || 500;\n  res.status(status).json({\n    error: err.message || 'Internal Server Error'\n  });\n});\n\n// Global handlers\nprocess.on('uncaughtException', (err) => {\n  console.error('Uncaught Exception:', err);\n  process.exit(1);\n});\n\nprocess.on('unhandledRejection', (reason, promise) => {\n  console.error('Unhandled Rejection:', reason);\n});"},
         {id:9,question:"What is CORS and how to enable it?",englishAnswer:"CORS (Cross-Origin Resource Sharing) is a security mechanism that restricts web pages from making requests to a different domain than the one that served the web page. In Express, use the 'cors' middleware to enable CORS with configurable options.",banglaAnswer:"CORS একটি নিরাপত্তা ব্যবস্থা যা ভিন্ন ডোমেইনে রিকোয়েস্ট সীমাবদ্ধ করে। Express এ 'cors' মিডলওয়্যার ব্যবহার করে CORS সক্রিয় করা যায়।",explanation:"CORS preflight requests (OPTIONS) are automatically handled. For production, restrict origins to trusted domains only.",exampleCode:"const cors = require('cors');\n\n// Simple usage (allow all)\napp.use(cors());\n\n// Custom configuration\nconst corsOptions = {\n  origin: ['https://example.com', 'https://app.example.com'],\n  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],\n  allowedHeaders: ['Content-Type', 'Authorization'],\n  credentials: true,\n  optionsSuccessStatus: 200\n};\n\napp.use(cors(corsOptions));\n\n// Per-route CORS\napp.get('/public-data', cors(), (req, res) => {\n  res.json({ data: 'public' });\n});"},
         {id:10,question:"Explain JWT authentication implementation.",englishAnswer:"JWT (JSON Web Token) is an open standard for secure token-based authentication. It consists of header, payload, and signature. In Express, use jsonwebtoken package to sign and verify tokens. Tokens are sent in Authorization header as 'Bearer <token>'.",banglaAnswer:"JWT একটি ওপেন স্ট্যান্ডার্ড যা টোকেন-ভিত্তিক অথেনটিকেশনের জন্য ব্যবহৃত হয়। jsonwebtoken প্যাকেজ দিয়ে টোকেন তৈরি ও ভেরিফাই করা হয়।",explanation:"JWTs are stateless - no session storage needed. Use short expiration times with refresh tokens for better security. Never store sensitive data in payload.",exampleCode:"const jwt = require('jsonwebtoken');\nconst SECRET = process.env.JWT_SECRET;\n\n// Generate token\nconst generateToken = (userId, role) => {\n  return jwt.sign({ userId, role }, SECRET, { expiresIn: '1h' });\n};\n\n// Verify token middleware\nconst authenticateToken = (req, res, next) => {\n  const authHeader = req.headers['authorization'];\n  const token = authHeader && authHeader.split(' ')[1];\n  \n  if (!token) {\n    return res.status(401).json({ error: 'Access token required' });\n  }\n  \n  jwt.verify(token, SECRET, (err, user) => {\n    if (err) return res.status(403).json({ error: 'Invalid or expired token' });\n    req.user = user;\n    next();\n  });\n};\n\n// Protected route\napp.get('/profile', authenticateToken, (req, res) => {\n  res.json({ user: req.user });\n});\n\n// Login endpoint\napp.post('/login', async (req, res) => {\n  const { email, password } = req.body;\n  // Validate credentials (check database)\n  const user = await User.findOne({ email });\n  if (!user || !(await bcrypt.compare(password, user.password))) {\n    return res.status(401).json({ error: 'Invalid credentials' });\n  }\n  const token = generateToken(user._id, user.role);\n  res.json({ token });\n});"},
         {id:11,question:"How to parse request bodies in Express?",englishAnswer:"Express has built-in middleware for parsing request bodies: express.json() for JSON payloads and express.urlencoded() for URL-encoded form data (HTML forms). For file uploads, use multer middleware. For raw text or custom formats, create custom middleware.",banglaAnswer:"এক্সপ্রেসে রিকোয়েস্ট বডি পার্স করার জন্য বিল্ট-ইন মিডলওয়্যার আছে: express.json() JSON এর জন্য, express.urlencoded() ফর্ম ডেটার জন্য। ফাইল আপলোডের জন্য multer ব্যবহার করুন।",explanation:"Body parsers are middleware that populate req.body. Set limits to prevent large payload attacks. For nested objects, urlencoded extended option must be true.",exampleCode:"const express = require('express');\nconst multer = require('multer');\nconst app = express();\n\n// Parse JSON bodies (API requests)\napp.use(express.json({ limit: '10mb' }));\n\n// Parse URL-encoded bodies (form submissions)\napp.use(express.urlencoded({ extended: true, limit: '10mb' }));\n\n// File upload with multer\nconst upload = multer({ dest: 'uploads/' });\napp.post('/upload', upload.single('file'), (req, res) => {\n  console.log(req.file); // File info\n  console.log(req.body); // Text fields\n  res.json({ message: 'File uploaded', file: req.file });\n});\n\n// Raw body parser for webhooks\napp.post('/webhook', express.raw({ type: 'application/json' }), (req, res) => {\n  console.log(req.body.toString());\n  res.status(200).end();\n});"},
@@ -624,7 +681,7 @@
         {id:23,question:"What is the crypto module used for?",englishAnswer:"The crypto module provides cryptographic functionality including hashing, HMAC, encryption/decryption, random number generation, and digital signatures. It's essential for password storage, token generation, secure data transmission, and integrity verification.",banglaAnswer:"ক্রিপ্টো মডিউল ক্রিপ্টোগ্রাফিক ফাংশনালিটি দেয়: হ্যাশিং, এনক্রিপশন/ডিক্রিপশন, র্যান্ডম সংখ্যা জেনারেশন, ডিজিটাল সিগনেচার। পাসওয়ার্ড স্টোরেজ ও সিকিউর ডেটা ট্রান্সমিশনে গুরুত্বপূর্ণ।",explanation:"For password hashing, use bcrypt or scrypt (not plain SHA). Always use constant-time comparison (crypto.timingSafeEqual) to prevent timing attacks.",exampleCode:"const crypto = require('crypto');\n\n// Hashing (one-way)\nconst hash = crypto.createHash('sha256').update('password123').digest('hex');\n\n// HMAC (hash with secret key)\nconst hmac = crypto.createHmac('sha256', 'secret-key').update('data').digest('hex');\n\n// Generate secure random tokens\nconst generateToken = () => {\n  return crypto.randomBytes(32).toString('hex');\n};\n\n// Encryption (AES-256-CBC)\nconst algorithm = 'aes-256-cbc';\nconst key = crypto.randomBytes(32);\nconst iv = crypto.randomBytes(16);\n\nconst encrypt = (text) => {\n  const cipher = crypto.createCipheriv(algorithm, key, iv);\n  let encrypted = cipher.update(text, 'utf8', 'hex');\n  encrypted += cipher.final('hex');\n  return { encrypted, iv: iv.toString('hex') };\n};\n\nconst decrypt = (encrypted, ivHex) => {\n  const decipher = crypto.createDecipheriv(algorithm, key, Buffer.from(ivHex, 'hex'));\n  let decrypted = decipher.update(encrypted, 'hex', 'utf8');\n  decrypted += decipher.final('utf8');\n  return decrypted;\n};\n\n// Constant-time comparison (prevents timing attacks)\nconst isValid = crypto.timingSafeEqual(Buffer.from(a), Buffer.from(b));"},
         {id:24,question:"Explain REST API best practices in Express.",englishAnswer:"REST API best practices include: use proper HTTP methods (GET, POST, PUT, DELETE, PATCH), use plural nouns for endpoints (/users not /user), version your API (/v1/users), use proper status codes, implement pagination/filtering with query params, validate input, secure with authentication, and document with OpenAPI/Swagger.",banglaAnswer:"REST API বেস্ট প্র্যাকটিস: সঠিক HTTP মেথড ব্যবহার, endpoint-এ বহুবচন নাউন ব্যবহার, API ভার্সন করা, সঠিক স্ট্যাটাস কোড ব্যবহার, পেজিনেশন/ফিল্টারিং ইমপ্লিমেন্ট করা।",explanation:"Follow consistent naming conventions. Use nouns for resources, not verbs. Keep responses predictable. Use Hypermedia (HATEOAS) for discoverability when needed.",exampleCode:"const express = require('express');\nconst router = express.Router();\n\n// GET - List with pagination\nrouter.get('/api/v1/users', async (req, res) => {\n  const page = parseInt(req.query.page) || 1;\n  const limit = parseInt(req.query.limit) || 10;\n  const skip = (page - 1) * limit;\n  \n  const users = await User.find().skip(skip).limit(limit);\n  const total = await User.countDocuments();\n  \n  res.json({\n    data: users,\n    pagination: {\n      page,\n      limit,\n      total,\n      pages: Math.ceil(total / limit)\n    }\n  });\n});\n\n// GET single resource\nrouter.get('/api/v1/users/:id', async (req, res) => {\n  const user = await User.findById(req.params.id);\n  if (!user) return res.status(404).json({ error: 'User not found' });\n  res.json({ data: user });\n});\n\n// POST - Create\nrouter.post('/api/v1/users', validateUser, async (req, res) => {\n  const user = await User.create(req.body);\n  res.status(201).json({ data: user });\n});\n\n// PUT - Full update\nrouter.put('/api/v1/users/:id', async (req, res) => {\n  const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });\n  res.json({ data: user });\n});\n\n// DELETE\nrouter.delete('/api/v1/users/:id', async (req, res) => {\n  await User.findByIdAndDelete(req.params.id);\n  res.status(204).send();\n});\n\n// Error response format\nres.status(400).json({\n  error: 'Validation Error',\n  details: errors.array(),\n  code: 'VALIDATION_FAILED'\n});"},
         {id:25,question:"How to manage sessions in Express?",englishAnswer:"Express session management is handled by express-session middleware. It stores session data on the server and sends a session ID cookie to the client. For production, use external session stores like Redis, MongoDB, or PostgreSQL instead of default memory store (which leaks memory and doesn't scale).",banglaAnswer:"এক্সপ্রেস সেশন ম্যানেজমেন্ট express-session মিডলওয়্যার দ্বারা হ্যান্ডেল করা হয়। প্রোডাকশনে বাহ্যিক সেশন স্টোর (Redis, MongoDB) ব্যবহার করুন।",explanation:"Session cookies should be secure (httpOnly, secure in production). Set appropriate maxAge and rolling options. For stateless auth, prefer JWT. For traditional web apps, sessions are preferred.",exampleCode:"const session = require('express-session');\nconst RedisStore = require('connect-redis')(session);\nconst redisClient = require('./redis');\n\napp.use(session({\n  store: new RedisStore({ client: redisClient }),\n  secret: process.env.SESSION_SECRET,\n  resave: false,\n  saveUninitialized: false,\n  name: 'sessionId', // Custom cookie name (default 'connect.sid')\n  cookie: {\n    secure: process.env.NODE_ENV === 'production', // HTTPS only in production\n    httpOnly: true, // Prevents client-side JS access\n    maxAge: 1000 * 60 * 60 * 24, // 24 hours\n    sameSite: 'lax'\n  },\n  rolling: true // Reset maxAge on each response\n}));\n\n// Login route\napp.post('/login', async (req, res) => {\n  const { email, password } = req.body;\n  const user = await User.authenticate(email, password);\n  \n  if (user) {\n    req.session.userId = user.id;\n    req.session.userRole = user.role;\n    req.session.loggedInAt = Date.now();\n    res.json({ message: 'Logged in successfully' });\n  } else {\n    res.status(401).json({ error: 'Invalid credentials' });\n  }\n});\n\n// Protected route\napp.get('/dashboard', (req, res) => {\n  if (!req.session.userId) {\n    return res.status(401).json({ error: 'Not authenticated' });\n  }\n  res.json({ message: 'Welcome to dashboard', userId: req.session.userId });\n});\n\n// Logout\napp.post('/logout', (req, res) => {\n  req.session.destroy((err) => {\n    if (err) return res.status(500).json({ error: 'Logout failed' });\n    res.clearCookie('sessionId');\n    res.json({ message: 'Logged out' });\n  });\n});"},
-        {id:26,question:"What are some security best practices in Express?",englishAnswer:"Security best practices: use Helmet.js for security headers, implement rate limiting, validate/sanitize input (express-validator), prevent SQL/NoSQL integration, use HTTPS, store secrets in environment variables, set secure cookie options, avoid eval(), implement CSRF protection, keep dependencies updated (npm audit).",banglaAnswer:"সিকিউরিটি বেস্ট প্র্যাকটিস: Helmet.js ব্যবহার, রেট লিমিটিং ইমপ্লিমেন্ট, ইনপুট ভ্যালিডেট/স্যানিটাইজ, HTTPS ব্যবহার, সিক্রেট এনভায়রনমেন্ট ভেরিয়েবলে রাখা, ডিপেন্ডেন্সি আপডেট রাখা।",explanation:"Regularly run `npm audit` to find vulnerabilities. Use Snyk or similar tools for continuous monitoring. Implement a Content Security Policy (CSP).",exampleCode:"const helmet = require('helmet');\nconst expressValidator = require('express-validator');\nconst csrf = require('csurf');\n\n// Security headers\napp.use(helmet());\napp.use(helmet.contentSecurityPolicy({\n  directives: {\n    defaultSrc: [\"'self'\"],\n    styleSrc: [\"'self'\", \"'unsafe-inline'\"],\n    scriptSrc: [\"'self'\"],\n    imgSrc: [\"'self'\", \"data:\", \"https:\"]\n  }\n}));\n\n// Hide X-Powered-By header\napp.disable('x-powered-by');\n\n// Input validation\nconst { body, validationResult } = require('express-validator');\napp.post('/user',\n  body('email').isEmail().normalizeEmail(),\n  body('password').isLength({ min: 8 }).trim(),\n  body('age').optional().isInt({ min: 0, max: 120 }),\n  (req, res) => {\n    const errors = validationResult(req);\n    if (!errors.isEmpty()) {\n      return res.status(400).json({ errors: errors.array() });\n    }\n    // Process request\n  }\n);\n\n// Prevent NoSQL injection (use mongoose or similar ODM)\n// CSRF protection (for traditional web apps, not APIs)\nconst csrfProtection = csrf({ cookie: true });\napp.post('/form', csrfProtection, (req, res) => {\n  // Form submission with CSRF token\n});\n\n// Trust proxy if behind reverse proxy\napp.set('trust proxy', 1);\n\n// Timeout for slow requests\napp.use((req, res, next) => {\n  req.setTimeout(30000); // 30 seconds\n  next();\n});"},
+        {id:26,question:"What are some security best practices in Express?",englishAnswer:"Security best practices: use Helmet.js for security headers, implement rate limiting, validate/sanitize input (express-validator), prevent SQL/NoSQL injection, use HTTPS, store secrets in environment variables, set secure cookie options, avoid eval(), implement CSRF protection, keep dependencies updated (npm audit).",banglaAnswer:"সিকিউরিটি বেস্ট প্র্যাকটিস: Helmet.js ব্যবহার, রেট লিমিটিং ইমপ্লিমেন্ট, ইনপুট ভ্যালিডেট/স্যানিটাইজ, HTTPS ব্যবহার, সিক্রেট এনভায়রনমেন্ট ভেরিয়েবলে রাখা, ডিপেন্ডেন্সি আপডেট রাখা।",explanation:"Regularly run `npm audit` to find vulnerabilities. Use Snyk or similar tools for continuous monitoring. Implement a Content Security Policy (CSP).",exampleCode:"const helmet = require('helmet');\nconst expressValidator = require('express-validator');\nconst csrf = require('csurf');\n\n// Security headers\napp.use(helmet());\napp.use(helmet.contentSecurityPolicy({\n  directives: {\n    defaultSrc: [\"'self'\"],\n    styleSrc: [\"'self'\", \"'unsafe-inline'\"],\n    scriptSrc: [\"'self'\"],\n    imgSrc: [\"'self'\", \"data:\", \"https:\"]\n  }\n}));\n\n// Hide X-Powered-By header\napp.disable('x-powered-by');\n\n// Input validation\nconst { body, validationResult } = require('express-validator');\napp.post('/user',\n  body('email').isEmail().normalizeEmail(),\n  body('password').isLength({ min: 8 }).trim(),\n  body('age').optional().isInt({ min: 0, max: 120 }),\n  (req, res) => {\n    const errors = validationResult(req);\n    if (!errors.isEmpty()) {\n      return res.status(400).json({ errors: errors.array() });\n    }\n    // Process request\n  }\n);\n\n// Prevent NoSQL injection (use mongoose or similar ODM)\n// CSRF protection (for traditional web apps, not APIs)\nconst csrfProtection = csrf({ cookie: true });\napp.post('/form', csrfProtection, (req, res) => {\n  // Form submission with CSRF token\n});\n\n// Trust proxy if behind reverse proxy\napp.set('trust proxy', 1);\n\n// Timeout for slow requests\napp.use((req, res, next) => {\n  req.setTimeout(30000); // 30 seconds\n  next();\n});"},
         {id:27,question:"Explain the difference between req.params, req.query, and req.body.",englishAnswer:"req.params contains route parameters from URL path (e.g., /users/:id). req.query contains URL query string parameters (e.g., ?page=1&sort=asc). req.body contains data sent in request body (POST/PUT/PATCH requests) and requires body-parsing middleware like express.json().",banglaAnswer:"req.params URL পাথ থেকে রাউট প্যারামিটার ধারণ করে। req.query URL কোয়েরি স্ট্রিং প্যারামিটার ধারণ করে। req.body রিকোয়েস্ট বডির ডেটা ধারণ করে।",explanation:"Params identify specific resources. Query for filtering/pagination. Body for creating/updating. Always validate all three sources as they come from client input.",exampleCode:"// Example route: GET /api/users/123/posts?page=2&limit=10&sort=desc\napp.get('/api/users/:userId/posts', (req, res) => {\n  // Route parameters (from URL path)\n  const userId = req.params.userId; // '123'\n  \n  // Query parameters (from ?key=value)\n  const page = req.query.page; // '2'\n  const limit = req.query.limit; // '10'\n  const sort = req.query.sort; // 'desc'\n  \n  res.json({ userId, page, limit, sort });\n});\n\n// Example POST with body\napp.post('/api/users', (req, res) => {\n  // Body parameters (from JSON or form data)\n  const { name, email, password } = req.body;\n  \n  // All user input must be validated!\n  res.json({ name, email });\n});\n\n// Multiple param types in one request\n// PUT /api/users/456/posts/789?version=2\napp.put('/api/users/:userId/posts/:postId', (req, res) => {\n  const { userId, postId } = req.params;\n  const { version } = req.query;\n  const { title, content } = req.body;\n  \n  res.json({ userId, postId, version, title, content });\n});"},
         {id:28,question:"What is the buffer module and when to use it?",englishAnswer:"Buffer class handles binary data directly in memory, outside the V8 heap. Buffers are fixed-size chunks of raw memory. They're essential for working with TCP streams, file system operations, cryptography, and binary protocols. Buffers are faster than strings for binary data manipulation.",banglaAnswer:"Buffer ক্লাস V8 হিপের বাইরে সরাসরি মেমোরিতে বাইনারি ডেটা হ্যান্ডেল করে। TCP স্ট্রিম, ফাইল সিস্টেম, ক্রিপ্টোগ্রাফির জন্য অপরিহার্য।",explanation:"Buffers are mutable and have fixed length. Use Buffer.alloc() instead of Buffer() constructor for security. Node.js automatically uses buffers for network and file I/O.",exampleCode:"const buf = Buffer.from('Hello World', 'utf8');\nconsole.log(buf); // <Buffer 48 65 6c 6c 6f 20 57 6f 72 6c 64>\nconsole.log(buf.toString('hex')); // 48656c6c6f20576f726c64\nconsole.log(buf.toString('base64')); // SGVsbG8gV29ybGQ=\n\n// Create buffers safely\nconst safeBuffer = Buffer.alloc(10); // Zero-filled, safe\nconst unsafeBuffer = Buffer.allocUnsafe(10); // Faster but may contain old data\n\n// Write to buffer\nbuf.write('Node'); // Overwrites first 4 bytes\nconsole.log(buf.toString()); // 'Node World'\n\n// Buffer operations\nconst buf1 = Buffer.from('Hello');\nconst buf2 = Buffer.from(' World');\nconst combined = Buffer.concat([buf1, buf2]);\nconsole.log(combined.toString()); // 'Hello World'\n\n// Compare buffers\nconst a = Buffer.from('abc');\nconst b = Buffer.from('abc');\nconsole.log(a.equals(b)); // true\nconsole.log(Buffer.compare(a, b)); // 0\n\n// Slice (creates view, not copy)\nconst slice = buf.slice(0, 5);\nslice[0] = 74; // Changes original buffer!\nconsole.log(buf.toString()); // 'Jello World'"},
         {id:29,question:"How to implement file uploads in Express?",englishAnswer:"File uploads in Express are handled using the multer middleware. Multer processes multipart/form-data, stores files on disk or in memory, and provides file metadata. You can configure storage destination, filename, file size limits, and file type filters for security.",banglaAnswer:"Express এ ফাইল আপলোড multer মিডলওয়্যার দিয়ে হ্যান্ডেল করা হয়। multer ফাইল স্টোরেজ, সাইজ লিমিট এবং টাইপ ফিল্টার কনফিগার করা যায়।",explanation:"Always validate file types and sizes. For production, upload files to cloud storage (S3, GCS) rather than local disk. Scan uploaded files for malware.",exampleCode:"const multer = require('multer');\nconst path = require('path');\n\n// Configure storage\nconst storage = multer.diskStorage({\n  destination: (req, file, cb) => {\n    cb(null, 'uploads/');\n  },\n  filename: (req, file, cb) => {\n    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);\n    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));\n  }\n});\n\n// File filter\nconst fileFilter = (req, file, cb) => {\n  const allowedTypes = /jpeg|jpg|png|gif|pdf/;\n  const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());\n  const mimetype = allowedTypes.test(file.mimetype);\n  \n  if (mimetype && extname) {\n    return cb(null, true);\n  } else {\n    cb(new Error('Only images and PDFs are allowed'));\n  }\n};\n\n// Configure multer\nconst upload = multer({\n  storage: storage,\n  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit\n  fileFilter: fileFilter\n});\n\n// Single file upload\napp.post('/upload/single', upload.single('avatar'), (req, res) => {\n  console.log(req.file); // File info\n  console.log(req.body); // Text fields\n  res.json({ message: 'File uploaded', file: req.file });\n});\n\n// Multiple files upload\napp.post('/upload/multiple', upload.array('photos', 10), (req, res) => {\n  res.json({ files: req.files });\n});\n\n// Mixed fields\napp.post('/upload/fields', upload.fields([\n  { name: 'avatar', maxCount: 1 },\n  { name: 'gallery', maxCount: 8 }\n]), (req, res) => {\n  res.json({ files: req.files });\n});\n\n// Error handling for multer\napp.use((error, req, res, next) => {\n  if (error instanceof multer.MulterError) {\n    if (error.code === 'FILE_TOO_LARGE') {\n      return res.status(400).json({ error: 'File too large' });\n    }\n  }\n  next(error);\n});"},
@@ -633,20 +690,13 @@
         {id:32,question:"Explain the child_process module and use cases.",englishAnswer:"The child_process module enables creating child processes to execute system commands or other Node.js scripts. Methods: exec (buffered output), spawn (streaming), fork (Node.js process with IPC), execFile (executable). Use for background tasks, system operations, or leveraging other programming languages.",banglaAnswer:"child_process মডিউল সিস্টেম কমান্ড বা অন্যান্য Node.js স্ক্রিপ্ট এক্সিকিউট করার জন্য চাইল্ড প্রসেস তৈরি করে। ব্যাকগ্রাউন্ড টাস্ক বা সিস্টেম অপারেশনের জন্য ব্যবহার করুন।",explanation:"spawn is more efficient for large outputs. fork creates a new Node instance with IPC. Always handle errors and child process exit codes.",exampleCode:"const { exec, spawn, fork, execFile } = require('child_process');\nconst path = require('path');\n\n// exec: buffers output (good for small outputs)\nexec('ls -la', (error, stdout, stderr) => {\n  if (error) console.error(`exec error: ${error}`);\n  console.log(`stdout: ${stdout}`);\n});\n\n// spawn: streams output (good for large data)\nconst ls = spawn('ls', ['-la', '/usr']);\nls.stdout.on('data', (data) => {\n  console.log(`Output: ${data}`);\n});\nls.stderr.on('data', (data) => {\n  console.error(`Error: ${data}`);\n});\nls.on('close', (code) => {\n  console.log(`Child process exited with code ${code}`);\n});\n\n// fork: separate Node process with messaging\nconst child = fork(path.join(__dirname, 'worker.js'));\nchild.on('message', (msg) => {\n  console.log('Message from child:', msg);\n});\nchild.send({ hello: 'world' });\n\n// execFile: execute file directly (no shell)\nexecFile('node', ['--version'], (error, stdout) => {\n  console.log('Node version:', stdout);\n});\n\n// worker.js (child process)\nprocess.on('message', (msg) => {\n  console.log('Parent message:', msg);\n  process.send({ result: 'processed', data: msg });\n});\n\n// Use case: Run Python script\nconst python = spawn('python3', ['script.py', 'arg1']);\npython.stdout.on('data', (data) => console.log(data.toString()));"},
         {id:33,question:"What is the difference between development and production dependencies?",englishAnswer:"dependencies are required for the application to run in production (express, mongoose, etc.). devDependencies are only needed during development (nodemon, jest, eslint, webpack). Use `npm install --save-prod` for production and `npm install --save-dev` for development.",banglaAnswer:"dependencies প্রোডাকশনে অ্যাপ চালানোর জন্য প্রয়োজন। devDependencies শুধুমাত্র ডেভেলপমেন্টের সময় প্রয়োজন।",explanation:"Install production dependencies only with `npm install --production`. This reduces deployment size and security surface. devDependencies include testing, linting, and build tools.",exampleCode:"// package.json example\n{\n  \"name\": \"my-api\",\n  \"version\": \"1.0.0\",\n  \"dependencies\": {\n    \"express\": \"^4.18.0\",\n    \"mongoose\": \"^7.0.0\",\n    \"dotenv\": \"^16.0.0\"\n  },\n  \"devDependencies\": {\n    \"nodemon\": \"^2.0.0\",\n    \"jest\": \"^29.0.0\",\n    \"eslint\": \"^8.0.0\",\n    \"supertest\": \"^6.0.0\"\n  },\n  \"scripts\": {\n    \"start\": \"node app.js\",\n    \"dev\": \"nodemon app.js\",\n    \"test\": \"jest\",\n    \"lint\": \"eslint .\"\n  }\n}\n\n// Install production only (deployment)\nnpm install --production\n\n// Install all dependencies (development)\nnpm install\n\n// Add new dependency\nnpm install bcrypt --save-prod\n\n// Add dev dependency\nnpm install @types/node --save-dev\n\n// Remove dependency\nnpm uninstall package-name"},
         {id:34,question:"How to implement pagination in Node.js/Express?",englishAnswer:"Pagination is implemented using skip() and limit() in MongoDB, OFFSET and LIMIT in SQL, or cursor-based pagination for better performance. Use query parameters like ?page=1&limit=10. Return pagination metadata including total, page, limit, and totalPages for client convenience.",banglaAnswer:"পেজিনেশন skip() এবং limit() (MongoDB) বা OFFSET এবং LIMIT (SQL) দিয়ে ইমপ্লিমেন্ট করা হয়। ক্লায়েন্টের জন্য মেটাডেটা সহ পেজিনেশন তথ্য রিটার্ন করুন।",explanation:"For large datasets, cursor-based pagination is more efficient than offset-based. Always validate page and limit values to prevent abuse.",exampleCode:"// MongoDB with Mongoose\napp.get('/api/posts', async (req, res) => {\n  const page = parseInt(req.query.page) || 1;\n  const limit = parseInt(req.query.limit) || 10;\n  const skip = (page - 1) * limit;\n  \n  try {\n    const posts = await Post.find()\n      .sort({ createdAt: -1 })\n      .skip(skip)\n      .limit(limit);\n    \n    const total = await Post.countDocuments();\n    const totalPages = Math.ceil(total / limit);\n    \n    res.json({\n      data: posts,\n      pagination: {\n        page,\n        limit,\n        total,\n        totalPages,\n        hasNext: page < totalPages,\n        hasPrev: page > 1\n      }\n    });\n  } catch (err) {\n    res.status(500).json({ error: err.message });\n  }\n});\n\n// SQL with PostgreSQL\napp.get('/api/users', async (req, res) => {\n  const { page = 1, limit = 10 } = req.query;\n  const offset = (parseInt(page) - 1) * parseInt(limit);\n  \n  const result = await db.query(\n    'SELECT * FROM users ORDER BY id LIMIT $1 OFFSET $2',\n    [limit, offset]\n  );\n  const total = await db.query('SELECT COUNT(*) FROM users');\n  \n  res.json({\n    data: result.rows,\n    pagination: {\n      page: parseInt(page),\n      limit: parseInt(limit),\n      total: parseInt(total.rows[0].count)\n    }\n  });\n});\n\n// Cursor-based pagination (more efficient for large datasets)\napp.get('/api/events', async (req, res) => {\n  const { cursor, limit = 10 } = req.query;\n  const query = cursor ? { _id: { $gt: cursor } } : {};\n  \n  const events = await Event.find(query)\n    .sort({ _id: 1 })\n    .limit(parseInt(limit) + 1);\n  \n  const hasNext = events.length > limit;\n  const data = hasNext ? events.slice(0, -1) : events;\n  const nextCursor = hasNext ? data[data.length - 1]._id : null;\n  \n  res.json({\n    data,\n    nextCursor,\n    hasNext\n  });\n});"},
-        {id:35,question:"What are some performance optimization techniques in Node.js?",englishAnswer:"Performance optimizations: use clustering for multi-core systems, implement caching (Redis, in-memory), compress responses (compression middleware), use connection pooling for databases, optimize database queries with indexes, implement pagination, use streams for large data, enable gzip compression, use HTTP/2, and profile with clinic.js or node --prof.",banglaAnswer:"পারফরম্যান্স অপটিমাইজেশন: ক্লাস্টারিং ব্যবহার, ক্যাশিং ইমপ্লিমেন্ট, রেসপন্স কম্প্রেস, ডাটাবেস কোয়েরি অপটিমাইজ, স্ট্রিম ব্যবহার, gzip কম্প্রেশন সক্ষম করুন।",explanation:"Performance optimization requires profiling. Optimize database indexes, configure proper connection pool limits, stream heavy data responses, and use cache buffers efficiently.",exampleCode:"const compression = require('compression');\nconst Redis = require('ioredis');\nconst redis = new Redis();\n\n// Enable gzip compression\napp.use(compression());\n\n// Implement caching middleware\nconst cache = (duration) => {\n  return async (req, res, next) => {\n    const key = `cache:${req.originalUrl}`;\n    const cached = await redis.get(key);\n    \n    if (cached) {\n      return res.json(JSON.parse(cached));\n    }\n    \n    // Store original send function\n    const originalSend = res.json;\n    res.json = function(data) {\n      redis.setex(key, duration, JSON.stringify(data));\n      originalSend.call(this, data);\n    };\n    next();\n  };\n};\n\napp.get('/api/expensive', cache(300), async (req, res) => {\n  const data = await expensiveQuery();\n  res.json(data);\n});\n\n// Connection pooling with database\nconst pool = new Pool({ max: 20, idleTimeoutMillis: 30000 });\n\n// Stream large responses instead of buffering\napp.get('/api/large-data', (req, res) => {\n  const stream = db.getLargeDataStream();\n  stream.pipe(res);\n});"}
+        {id:35,question:"What are some performance optimization techniques in Node.js?",englishAnswer:"Performance optimizations: use clustering for multi-core systems, implement caching (Redis, in-memory), compress responses (compression middleware), use connection pooling for databases, optimize database queries with indexes, implement pagination, use streams for large data, enable gzip compression, use HTTP/2, and profile with clinic.js or node --prof.",banglaAnswer:"পারফরম্যান্স অপটিমাইজেশন: ক্লাস্টারিং ব্যবহার, ক্যাশিং ইমপ্লিমেন্ট, রেসপন্স কম্প্রেস, ডাটাবেস কোয়েরি অপটিমাইজ, স্ট্রিম ব্যবহার, gzip কম্প্রেশন সক্ষম করুন।",explanation:"Regularly profile your application. Monitor event loop lag. Use APM tools (New Relic, Datadog) for production monitoring.",exampleCode:"const compression = require('compression');\nconst Redis = require('ioredis');\nconst redis = new Redis();\n\n// Enable gzip compression\napp.use(compression());\n\n// Implement caching middleware\nconst cache = (duration) => {\n  return async (req, res, next) => {\n    const key = `cache:${req.originalUrl}`;\n    const cached = await redis.get(key);\n    \n    if (cached) {\n      return res.json(JSON.parse(cached));\n    }\n    \n    // Store original send function\n    const originalSend = res.json;\n    res.json = function(data) {\n      redis.setex(key, duration, JSON.stringify(data));\n      originalSend.call(this, data);\n    };\n    next();\n  };\n};\n\napp.get('/api/expensive', cache(300), async (req, res) => {\n  const data = await expensiveQuery();\n  res.json(data);\n});\n\n// Connection pooling with database\nconst pool = new Pool({ max: 20, idleTimeoutMillis: 30000 });\n\n// Stream large responses instead of buffering\napp.get('/api/large-data', (req, res) => {\n  const stream = db.getLargeDataStream();\n  stream.pipe(res);\n});\n\n// Enable HTTP/2\nconst http2 = require('http2');\nconst server = http2.createSecureServer(options, app);\n\n// Profile with clinic\n// npm install -g clinic\n// clinic flame -- node app.js\n\n// Monitor event loop lag\nlet lastCheck = Date.now();\nsetInterval(() => {\n  const now = Date.now();\n  const lag = now - lastCheck - 1000;\n  if (lag > 50) console.warn(`Event loop lag detected: ${lag}ms`);\n  lastCheck = now;\n}, 1000);"}
     ];
 
     const SUBJECT_KEY = 'node';
-
     const container = document.getElementById('questions-container');
-    const searchBox = document.getElementById('search-box');
-    const filterBtns = document.querySelectorAll('.filter-btn');
-    const noResultsPanel = document.getElementById('no-results-panel');
 
-    let currentFilter = 'all';
-    let searchQuery = '';
-
-    // LocalStorage Helper
+    // ---------- LocalStorage Helpers ----------
     function getProgress() {
         const data = localStorage.getItem('interview_hub_progress');
         if (!data) return {};
@@ -661,31 +711,33 @@
         localStorage.setItem('interview_hub_progress', JSON.stringify(progress));
     }
 
+    function isLearned(qId) {
+        const progress = getProgress();
+        return (progress[SUBJECT_KEY] || []).includes(qId);
+    }
+
     function toggleQuestionLearned(qId) {
         const progress = getProgress();
         if (!progress[SUBJECT_KEY]) {
             progress[SUBJECT_KEY] = [];
         }
-        
+
         const index = progress[SUBJECT_KEY].indexOf(qId);
         if (index > -1) {
             progress[SUBJECT_KEY].splice(index, 1);
         } else {
             progress[SUBJECT_KEY].push(qId);
         }
-        
+
         saveProgress(progress);
         updateProgressUI();
-        
-        // Update Card Visuals
+
         const card = document.getElementById(`card-q${qId}`);
         if (card) {
-            if (progress[SUBJECT_KEY].includes(qId)) {
-                card.classList.add('learned');
-            } else {
-                card.classList.remove('learned');
-            }
+            card.classList.toggle('learned', progress[SUBJECT_KEY].includes(qId));
         }
+
+        applyFilters();
     }
 
     function updateProgressUI() {
@@ -694,20 +746,16 @@
         const total = questionsData.length;
         const count = learnedList.filter(id => questionsData.some(q => q.id === id)).length;
         const percent = total > 0 ? Math.round((count / total) * 100) : 0;
-        
-        const textEl = document.getElementById('progress-text');
-        const percentEl = document.getElementById('progress-percent');
-        const fillEl = document.getElementById('progress-bar-fill');
 
-        if (textEl) textEl.textContent = `${count} of ${total} Mastered`;
-        if (percentEl) percentEl.textContent = `${percent}%`;
-        if (fillEl) fillEl.style.width = `${percent}%`;
+        document.getElementById('progress-text').textContent = `${count} of ${total} Mastered`;
+        document.getElementById('progress-percent').textContent = `${percent}%`;
+        document.getElementById('progress-bar-fill').style.width = `${percent}%`;
     }
 
-    // Escape HTML Helper
+    // ---------- Escape HTML Helper ----------
     function escapeHtml(str) {
         if (!str) return '';
-        return str.replace(/[&<>]/g, function(m) {
+        return str.replace(/[&<>]/g, function (m) {
             if (m === '&') return '&amp;';
             if (m === '<') return '&lt;';
             if (m === '>') return '&gt;';
@@ -715,75 +763,38 @@
         });
     }
 
+    // ---------- Render ----------
     function renderQuestions() {
-        const progress = getProgress();
-        const learnedList = progress[SUBJECT_KEY] || [];
         let html = '';
-        let visibleCount = 0;
-
         questionsData.forEach(q => {
-            const isLearned = learnedList.includes(q.id);
-            const matchesFilter = currentFilter === 'all' || 
-                (currentFilter === 'learned' && isLearned) || 
-                (currentFilter === 'unlearned' && !isLearned);
-
-            const englishText = q.englishAnswer || q.english || '';
-            const banglaText = q.banglaAnswer || q.bangla || '';
-            const codeText = q.exampleCode || q.code || '';
-
-            const titleLower = q.question.toLowerCase();
-            const engLower = englishText.toLowerCase();
-            const banLower = banglaText.toLowerCase();
-            const expLower = (q.explanation || '').toLowerCase();
-            const topicLower = (q.topic || '').toLowerCase();
-            
-            const matchesSearch = !searchQuery || 
-                titleLower.includes(searchQuery) || 
-                engLower.includes(searchQuery) || 
-                banLower.includes(searchQuery) || 
-                expLower.includes(searchQuery) ||
-                topicLower.includes(searchQuery);
-
-            if (matchesFilter && matchesSearch) {
-                visibleCount++;
-                const qId = `q${q.id}`;
-                const learnedClass = isLearned ? 'learned' : '';
-                
-                html += `
-                    <div class="question-card ${learnedClass}" id="card-${qId}">
-                        <div class="card-header-wrapper">
-                            <div class="question-title-text">
-                                <span class="q-num">${q.id}</span>
-                                <h2>${escapeHtml(q.question)}</h2>
-                                ${q.topic ? `<span class="topic-badge" style="margin-left: 0.5rem; font-size: 0.75rem; background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.2); color: #10b981;">${escapeHtml(q.topic)}</span>` : ''}
-                            </div>
-                            <button class="learned-toggle-btn" onclick="toggleQuestionLearned(${q.id})">
-                                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-                                    <polyline points="20 6 9 17 4 12"></polyline>
-                                </svg>
-                                <span>Mastered</span>
-                            </button>
-                        </div>
-                        <div class="toggle-group">
-                            <button class="toggle-btn" data-target="eng-${qId}">English Answer</button>
-                            <button class="toggle-btn" data-target="ban-${qId}">Bengali Answer</button>
-                            <button class="toggle-btn" data-target="exp-${qId}">Explanation</button>
-                            <button class="toggle-btn" data-target="code-${qId}">Example Code</button>
-                        </div>
-                        <div id="eng-${qId}" class="content-panel answer-text"><p>${escapeHtml(englishText)}</p></div>
-                        <div id="ban-${qId}" class="content-panel answer-text bangla-answer"><p>${escapeHtml(banglaText)}</p></div>
-                        <div id="exp-${qId}" class="content-panel explanation-text"><p>${escapeHtml(q.explanation)}</p></div>
-                        <div id="code-${qId}" class="content-panel code-text"><pre><code>${escapeHtml(codeText)}</code></pre></div>
+            const qId = `q${q.id}`;
+            const learned = isLearned(q.id);
+            html += `
+                <div class="question-card${learned ? ' learned' : ''}" id="card-${qId}" data-qid="${q.id}">
+                    <div class="card-header-wrapper">
+                        <div class="question-title-text"><span class="q-num">${q.id}</span> ${escapeHtml(q.question)}</div>
+                        <button class="learned-toggle-btn" onclick="toggleQuestionLearned(${q.id})">
+                            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                            <span>Mark Learned</span>
+                        </button>
                     </div>
-                `;
-            }
+                    <div class="toggle-group">
+                        <button class="toggle-btn" data-target="eng-${qId}">English Answer</button>
+                        <button class="toggle-btn" data-target="ban-${qId}">Bengali Answer</button>
+                        <button class="toggle-btn" data-target="exp-${qId}">Explanation</button>
+                        <button class="toggle-btn" data-target="code-${qId}">Example Code</button>
+                    </div>
+                    <div id="eng-${qId}" class="content-panel answer-text"><p>${escapeHtml(q.englishAnswer)}</p></div>
+                    <div id="ban-${qId}" class="content-panel answer-text bangla-answer"><p>${escapeHtml(q.banglaAnswer)}</p></div>
+                    <div id="exp-${qId}" class="content-panel explanation-text"><p>${escapeHtml(q.explanation)}</p></div>
+                    <div id="code-${qId}" class="content-panel code-text"><pre><code>${escapeHtml(q.exampleCode)}</code></pre></div>
+                </div>
+            `;
         });
-
         container.innerHTML = html;
 
-        // Re-attach panel toggle handlers
         document.querySelectorAll('.toggle-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
+            btn.addEventListener('click', function () {
                 const targetId = this.getAttribute('data-target');
                 const targetPanel = document.getElementById(targetId);
                 if (targetPanel) {
@@ -792,69 +803,68 @@
                 }
             });
         });
-
-        // Toggle card cursor glow effect
-        const cards = document.querySelectorAll('.question-card');
-        cards.forEach(card => {
-            card.addEventListener('mousemove', (e) => {
-                const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                card.style.setProperty('--mouse-x', `${x}px`);
-                card.style.setProperty('--mouse-y', `${y}px`);
-            });
-        });
-
-        if (visibleCount === 0) {
-            noResultsPanel.style.display = 'block';
-        } else {
-            noResultsPanel.style.display = 'none';
-        }
     }
 
-    // Search and filter listeners
-    if (searchBox) {
-        searchBox.addEventListener('input', (e) => {
-            searchQuery = e.target.value.toLowerCase().trim();
-            renderQuestions();
+    // ---------- Filtering & Search ----------
+    let currentFilter = 'all';
+    let searchQuery = '';
+    const noResultsPanel = document.getElementById('no-results-panel');
+
+    function applyFilters() {
+        const progress = getProgress();
+        const learnedList = progress[SUBJECT_KEY] || [];
+        let visibleCount = 0;
+
+        document.querySelectorAll('.question-card').forEach(card => {
+            const qId = parseInt(card.getAttribute('data-qid'), 10);
+            const learnedQ = learnedList.includes(qId);
+
+            const matchesFilter = currentFilter === 'all' ||
+                (currentFilter === 'learned' && learnedQ) ||
+                (currentFilter === 'unlearned' && !learnedQ);
+
+            const matchesSearch = !searchQuery || card.textContent.toLowerCase().includes(searchQuery);
+
+            if (matchesFilter && matchesSearch) {
+                card.style.display = '';
+                visibleCount++;
+            } else {
+                card.style.display = 'none';
+            }
         });
+
+        noResultsPanel.style.display = visibleCount === 0 ? 'block' : 'none';
     }
 
-    filterBtns.forEach(btn => {
+    document.getElementById('search-box').addEventListener('input', (e) => {
+        searchQuery = e.target.value.toLowerCase().trim();
+        applyFilters();
+    });
+
+    document.querySelectorAll('.filter-btn').forEach(btn => {
         btn.addEventListener('click', () => {
-            filterBtns.forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             currentFilter = btn.getAttribute('data-filter');
-            renderQuestions();
+            applyFilters();
         });
     });
 
-    // Expand/Collapse all
-    window.expandAll = function() {
-        document.querySelectorAll('.question-card .toggle-btn').forEach(btn => {
-            const targetId = btn.getAttribute('data-target');
-            const targetPanel = document.getElementById(targetId);
-            if (targetPanel && !targetPanel.classList.contains('show')) {
-                targetPanel.classList.add('show');
-                btn.classList.add('active');
-            }
-        });
+    // ---------- Expand / Collapse All ----------
+    function expandAll() {
+        document.querySelectorAll('.content-panel').forEach(p => p.classList.add('show'));
+        document.querySelectorAll('.toggle-btn').forEach(b => b.classList.add('active'));
     }
 
-    window.collapseAll = function() {
-        document.querySelectorAll('.question-card .toggle-btn').forEach(btn => {
-            const targetId = btn.getAttribute('data-target');
-            const targetPanel = document.getElementById(targetId);
-            if (targetPanel && targetPanel.classList.contains('show')) {
-                targetPanel.classList.remove('show');
-                btn.classList.remove('active');
-            }
-        });
+    function collapseAll() {
+        document.querySelectorAll('.content-panel').forEach(p => p.classList.remove('show'));
+        document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
     }
 
-    // Initial load
-    updateProgressUI();
+    // ---------- Init ----------
     renderQuestions();
-</script>
+    updateProgressUI();
+    applyFilters();
+    </script>
 </body>
 </html>

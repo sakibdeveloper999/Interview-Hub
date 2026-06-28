@@ -344,6 +344,8 @@
             align-items: center;
             gap: 0.75rem;
             line-height: 1.4;
+            flex: 1 1 auto;
+            min-width: 0;
         }
 
         .q-num {
@@ -513,6 +515,59 @@
             color: var(--text-secondary);
             font-size: 0.85rem;
         }
+
+        /* Mobile fine-tuning: question text was oversized/cramped on phones */
+        @media (max-width: 600px) {
+            body {
+                padding: 1.5rem 1rem;
+            }
+
+            .card-header-wrapper {
+                padding: 0.9rem 1rem;
+                gap: 0.6rem;
+            }
+
+            .question-title-text {
+                font-size: 0.92rem;
+                line-height: 1.4;
+                gap: 0.55rem;
+            }
+
+            .q-num {
+                width: 22px;
+                height: 22px;
+                font-size: 0.7rem;
+            }
+
+            .learned-toggle-btn {
+                font-size: 0.65rem;
+                padding: 0.35rem 0.6rem;
+                gap: 0.25rem;
+            }
+
+            .learned-toggle-btn svg {
+                width: 12px;
+                height: 12px;
+            }
+
+            .toggle-group {
+                padding: 0.7rem 1rem;
+                gap: 0.4rem;
+            }
+
+            .toggle-btn {
+                font-size: 0.72rem;
+                padding: 0.35rem 0.7rem;
+            }
+
+            .content-panel.show {
+                padding: 1rem;
+            }
+
+            .content-panel p {
+                font-size: 0.88rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -538,11 +593,12 @@
             <div class="badge-list">
                 <span class="topic-badge">Components</span>
                 <span class="topic-badge">Hooks</span>
-                <span class="topic-badge">State Management</span>
                 <span class="topic-badge">Virtual DOM</span>
+                <span class="topic-badge">State</span>
+                <span class="topic-badge">Context</span>
                 <span class="topic-badge">Performance</span>
-                <span class="topic-badge">Routing</span>
-                <span class="topic-badge">Advanced</span>
+                <span class="topic-badge">Lifecycle</span>
+                <span class="topic-badge">Patterns</span>
             </div>
         </header>
 
@@ -555,8 +611,10 @@
                     </svg>
                     <span>Learning Progress</span>
                 </div>
-                <div class="progress-stats" id="progress-text">0 of 22 Mastered</div>
-                <div class="progress-stats" id="progress-percent" style="margin-left: 0.5rem;">0%</div>
+                <div style="display:flex; align-items:center;">
+                    <div class="progress-stats" id="progress-text">0 of 22 Mastered</div>
+                    <div class="progress-stats" id="progress-percent" style="margin-left: 0.5rem;">0%</div>
+                </div>
             </div>
             <div class="progress-bar-container">
                 <div class="progress-bar-fill" id="progress-bar-fill"></div>
@@ -570,7 +628,7 @@
                 <button class="filter-btn" data-filter="learned">Learned</button>
                 <button class="filter-btn" data-filter="unlearned">Unlearned</button>
             </div>
-            
+
             <div class="actions-bar">
                 <button class="action-btn" onclick="expandAll()">Expand All</button>
                 <button class="action-btn" onclick="collapseAll()">Collapse All</button>
@@ -586,7 +644,7 @@
 
         <!-- Questions container -->
         <div class="questions-list" id="questions-container"></div>
-        
+
         <div class="no-results" id="no-results-panel">
             <h3>No questions found</h3>
             <p>Try refining your search or filter options.</p>
@@ -599,41 +657,34 @@
 
     <script>
     const questionsData = [
-        {id:1,topic:"core",question:"What is React and what are its key features?",english:"React is a JavaScript library for building user interfaces, developed by Facebook. Key features: Virtual DOM for efficient updates, component-based architecture, JSX syntax, unidirectional data flow, hooks for state and lifecycle, and React Native for mobile.",bangla:"React হল ইউজার ইন্টারফেস তৈরির জন্য একটি JavaScript লাইব্রেরি। মূল বৈশিষ্ট্য: ভার্চুয়াল DOM, কম্পোনেন্ট-ভিত্তিক আর্কিটেকচার, JSX, ইউনিডাইরেকশনাল ডেটা ফ্লো।",explanation:"React is declarative - you describe UI, React handles updates. It only re-renders changed components via Virtual DOM diffing.",code:"function Welcome(props) { return <h1>Hello, {props.name}</h1>; }\nfunction App() {\n  return (<div><Welcome name=\"Alice\" /><Welcome name=\"Bob\" /></div>);\n}\nReactDOM.render(<App />, document.getElementById('root'));"},
-        {id:2,topic:"core",question:"Explain the Virtual DOM and how it works.",english:"Virtual DOM is a lightweight JavaScript representation of the real DOM. When state changes, React creates a new virtual DOM tree, diffs it with the previous tree, identifies minimal changes, and batches updates to the real DOM, improving performance.",bangla:"ভার্চুয়াল DOM হল রিয়েল DOM-এর হালকা JavaScript উপস্থাপনা। React পরিবর্তন শনাক্ত করে শুধু প্রয়োজনীয় অংশ আপডেট করে।",explanation:"Without Virtual DOM, direct DOM manipulation is expensive. React's diffing algorithm and batching prevent unnecessary reflows.",code:"// Virtual DOM process:\n// 1. State changes -> create new virtual DOM tree\n// 2. Diff with previous virtual DOM\n// 3. Batch updates to real DOM\nconst newVdom = { type: 'div', props: { children: 'New Content' } };\nconst changes = diff(previousVdom, newVdom);\npatch(realDom, changes);"},
-        {id:3,topic:"core",question:"What is JSX? Why is it used?",english:"JSX (JavaScript XML) is a syntax extension allowing HTML-like code in JavaScript. It gets transpiled to React.createElement() calls. JSX improves readability, prevents injection attacks, and provides compile-time error checking.",bangla:"JSX JavaScript-এর ভিতরে HTML-সদৃশ কোড লেখার অনুমতি দেয়। এটি React.createElement() কল এ ট্রান্সপাইল হয়।",explanation:"JSX is not required but recommended. It leverages JavaScript's power while maintaining UI structure readability.",code:"// JSX syntax\nconst element = <h1 className=\"title\">Hello, {userName}</h1>;\n// Transpiled to\nconst element = React.createElement('h1', { className: 'title' }, 'Hello, ', userName);\n// JSX with expressions\nfunction Greeting({ isLoggedIn }) {\n  return (<div>{isLoggedIn ? <h1>Welcome</h1> : <h1>Please sign in</h1>}</div>);\n}"},
-        {id:4,topic:"core",question:"What is the difference between state and props?",english:"Props are read-only data passed from parent to child. State is mutable data managed within a component. Props cannot be changed by child component; state can be changed using setState or useState hook.",bangla:"Props প্যারেন্ট থেকে চাইল্ডে পাঠানো রিড-অনলি ডেটা। স্টেট হল মিউটেবল ডেটা যা কম্পোনেন্টের ভিতরে ম্যানেজ করা হয়।",explanation:"Props enable component reusability. State enables interactivity. When either changes, React re-renders.",code:"function Parent() {\n  const [count, setCount] = useState(0);\n  return <Child count={count} onIncrement={() => setCount(count + 1)} />;\n}\nfunction Child({ count, onIncrement }) {\n  return (<div><p>Count: {count}</p><button onClick={onIncrement}>+</button></div>);\n}"},
-        {id:5,topic:"hooks",question:"Explain the useState hook with example.",english:"useState is a React Hook that adds state to functional components. It returns an array with current state value and an update function. Updates trigger re-renders. State can be any data type.",bangla:"useState ফাংশনাল কম্পোনেন্টে স্টেট যোগ করে। এটি বর্তমান স্টেট এবং আপডেট ফাংশন সহ একটি অ্যারে রিটার্ন করে।",explanation:"State updates are asynchronous and may be batched. Functional updates are safe when new state depends on previous state.",code:"function Counter() {\n  const [count, setCount] = useState(0);\n  return (<div><p>Clicked {count} times</p><button onClick={() => setCount(count + 1)}>+</button></div>);\n}\n// Object state\nconst [user, setUser] = useState({ name: '', email: '' });\nsetUser(prev => ({ ...prev, name: 'John' }));\n// Functional update\nsetCount(prev => prev + 1);"},
-        {id:6,topic:"hooks",question:"What is the useEffect hook and when to use it?",english:"useEffect performs side effects in functional components. It runs after render. Use cases: data fetching, subscriptions, timers, DOM manipulation. Takes effect function and dependency array.",bangla:"useEffect ফাংশনাল কম্পোনেন্টে সাইড ইফেক্ট পারফর্ম করে। ডেটা ফেচিং, টাইমার, সাবস্ক্রিপশনের জন্য ব্যবহার হয়।",explanation:"Empty deps runs once on mount. No deps runs after every render. Cleanup function runs on unmount.",code:"// Data fetching\nuseEffect(() => { fetch('/api/users/1').then(res => res.json()).then(setUser); }, []);\n// Event listener\nuseEffect(() => { const handler = () => setWidth(window.innerWidth); window.addEventListener('resize', handler); return () => window.removeEventListener('resize', handler); }, []);\n// Timer\nuseEffect(() => { const id = setInterval(() => setSeconds(s => s+1), 1000); return () => clearInterval(id); }, []);"},
-        {id:7,topic:"state",question:"What is the difference between props drilling and Context API?",english:"Props drilling passes data through multiple intermediate components. Context API shares values across component tree without prop drilling. Context uses provider-consumer pattern.",bangla:"প্রপস ড্রিলিং মধ্যস্থতাকারী কম্পোনেন্টের মাধ্যমে ডেটা পাস করে। Context API প্রপস ড্রিলিং ছাড়াই ভ্যালু শেয়ার করে।",explanation:"Context is good for global data like theme, auth, language. For complex state, consider Redux.",code:"const ThemeContext = React.createContext();\nfunction App() {\n  const [theme, setTheme] = useState('light');\n  return (<ThemeContext.Provider value={{ theme, setTheme }}><Dashboard /></ThemeContext.Provider>);\n}\nfunction Dashboard() {\n  const { theme, setTheme } = useContext(ThemeContext);\n  return <button onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>{theme}</button>;\n}"},
-        {id:8,topic:"hooks",question:"Explain the useRef hook and its use cases.",english:"useRef returns a mutable object with .current property that persists across renders without causing re-renders. Used for accessing DOM elements directly, storing mutable values, and persisting values between renders.",bangla:"useRef .current প্রপার্টি সহ একটি মিউটেবল অবজেক্ট রিটার্ন করে যা রি-রেন্ডার ট্রিগার করে না।",explanation:"useRef doesn't cause re-renders when .current changes. Use for imperative DOM operations and storing interval IDs.",code:"// Accessing DOM\nconst inputRef = useRef(null);\ninputRef.current.focus();\n<input ref={inputRef} />\n// Store previous value\nfunction usePrevious(value) {\n  const ref = useRef();\n  useEffect(() => { ref.current = value; }, [value]);\n  return ref.current;\n}\n// Store interval ID\nconst intervalRef = useRef();\nintervalRef.current = setInterval(() => {}, 1000);"},
-        {id:9,topic:"performance",question:"What is React.memo and how does it work?",english:"React.memo is a higher-order component that memoizes functional components. It prevents re-rendering if props haven't changed. Similar to PureComponent for class components.",bangla:"React.memo ফাংশনাল কম্পোনেন্ট মেমোইজ করে। প্রপস পরিবর্তিত না হলে এটি রি-রেন্ডার প্রতিরোধ করে।",explanation:"Use React.memo for components that render often with same props. Don't over-memoize simple components.",code:"const MemoizedChild = memo(({ value }) => {\n  console.log('Rendered');\n  return <div>{value}</div>;\n});\nfunction Parent() {\n  const [count, setCount] = useState(0);\n  return (<div><button onClick={() => setCount(count+1)}>Count: {count}</button><MemoizedChild value=\"Static\" /></div>);\n}"},
-        {id:10,topic:"core",question:"What are React fragments and why use them?",english:"Fragments let you group multiple children without adding extra DOM nodes. Use <React.Fragment> or <>. Prevents unnecessary div wrappers that can break CSS layouts.",bangla:"ফ্র্যাগমেন্ট অতিরিক্ত DOM নোড ছাড়াই একাধিক চাইল্ড গ্রুপ করে।",explanation:"Fragments are useful in tables, lists, and CSS Grid layouts. Keyed fragments need explicit React.Fragment with key.",code:"// Without Fragment (adds extra div)\nfunction Component() { return (<div><Child1 /><Child2 /></div>); }\n// With Fragment\nfunction Component() { return (<><Child1 /><Child2 /></>); }\n// Keyed fragments\n{items.map(item => (<React.Fragment key={item.id}><dt>{item.term}</dt><dd>{item.desc}</dd></React.Fragment>))}"},
-        {id:11,topic:"hooks",question:"What is the useCallback hook and when to use it?",english:"useCallback returns a memoized version of a function that only changes if dependencies change. It prevents unnecessary re-creation of functions on every render, optimizing child components that rely on reference equality.",bangla:"useCallback একটি ফাংশনের মেমোইজড ভার্সন রিটার্ন করে। অপ্রয়োজনীয় ফাংশন রিক্রিয়েশন প্রতিরোধ করে।",explanation:"Use when passing callbacks to optimized child components. Pair with React.memo for performance gains.",code:"function Parent() {\n  const [count, setCount] = useState(0);\n  const handleClick = useCallback(() => { console.log('Clicked'); }, []);\n  return <ExpensiveChild onClick={handleClick} />;\n}\nconst Button = React.memo(({ onClick }) => {\n  return <button onClick={onClick}>Click</button>;\n});"},
-        {id:12,topic:"hooks",question:"What is the useMemo hook and how is it different from useCallback?",english:"useMemo memoizes computed values (objects, arrays, calculations), while useCallback memoizes functions. useMemo returns memoized value, useCallback returns memoized function.",bangla:"useMemo কম্পিউটেড ভ্যালু মেমোইজ করে, useCallback ফাংশন মেমোইজ করে।",explanation:"Use useMemo for expensive calculations like sorting and filtering. Use useCallback to maintain function reference equality.",code:"// useMemo - memoizes value\nconst filteredTodos = useMemo(() => {\n  return todos.filter(todo => todo.text.includes(filter));\n}, [todos, filter]);\n// useCallback - memoizes function\nconst handleSelect = useCallback((item) => {\n  console.log('Selected:', item);\n}, []);"},
-        {id:13,topic:"state",question:"Explain the useReducer hook with an example.",english:"useReducer is an alternative to useState for complex state logic involving multiple sub-values or when next state depends on previous. It takes a reducer function and initial state, returns current state and dispatch function.",bangla:"useReducer জটিল স্টেট লজিকের জন্য useState-এর বিকল্প।",explanation:"useReducer follows Redux pattern. Ideal for form state, shopping cart, or state with many transitions.",code:"function counterReducer(state, action) {\n  switch(action.type) {\n    case 'INCREMENT': return { count: state.count + 1 };\n    case 'DECREMENT': return { count: state.count - 1 };\n    case 'RESET': return { count: 0 };\n    default: return state;\n  }\n}\nfunction Counter() {\n  const [state, dispatch] = useReducer(counterReducer, { count: 0 });\n  return (<div><p>Count: {state.count}</p><button onClick={() => dispatch({type:'INCREMENT'})}>+</button></div>);\n}"},
-        {id:14,topic:"core",question:"What are React lifecycle methods in class components?",english:"Lifecycle methods: Mounting (constructor, render, componentDidMount), Updating (render, componentDidUpdate), Unmounting (componentWillUnmount). Error Boundaries use componentDidCatch.",bangla:"ক্লাস কম্পোনেন্টে লাইফসাইকেল মেথড: Mounting, Updating, Unmounting।",explanation:"Functional components use useEffect for similar functionality. componentDidMount for data fetching, componentWillUnmount for cleanup.",code:"class LifecycleDemo extends React.Component {\n  componentDidMount() { console.log('Mounted'); fetch('/api/data').then(setData); }\n  componentDidUpdate(prevProps) { if (prevProps.id !== this.props.id) { this.fetchData(); } }\n  componentWillUnmount() { clearInterval(this.interval); }\n  render() { return <div>{this.state.data}</div>; }\n}"},
-        {id:15,topic:"core",question:"What are controlled and uncontrolled components?",english:"Controlled components have form data handled by React state. Uncontrolled components store form data in DOM using refs. Controlled components offer more control and validation.",bangla:"কন্ট্রোলড কম্পোনেন্টে ফর্ম ডেটা React স্টেট দ্বারা নিয়ন্ত্রিত হয়। আনকন্ট্রোলড কম্পোনেন্ট DOM-এ ডেটা সংরক্ষণ করে।",explanation:"Use controlled for most forms. Use uncontrolled for file inputs or simple forms with minimal logic.",code:"// Controlled\nfunction ControlledForm() {\n  const [name, setName] = useState('');\n  return <input value={name} onChange={e => setName(e.target.value)} />;\n}\n// Uncontrolled\nfunction UncontrolledForm() {\n  const nameRef = useRef();\n  const handleSubmit = () => console.log(nameRef.current.value);\n  return <input ref={nameRef} defaultValue=\"\" />;\n}"},
-        {id:16,topic:"core",question:"Explain conditional rendering in React.",english:"Conditional rendering works like JavaScript conditions. Use if statements, ternary operators, logical &&, or switch statements to render different UI based on state or props.",bangla:"কন্ডিশনাল রেন্ডারিং JavaScript কন্ডিশনের মত কাজ করে।",explanation:"Avoid nesting ternaries deeply. Use early returns. For conditional rendering of nothing, return null.",code:"function Greeting({ isLoggedIn, user }) {\n  if (!isLoggedIn) return <LoginButton />;\n  return (<div><h1>Welcome {user.name}</h1>{user.isAdmin ? <AdminPanel /> : <UserPanel />}</div>);\n}\nfunction Notification({ count }) {\n  return <div>{count > 0 && <span>{count} new messages</span>}</div>;\n}"},
-        {id:17,topic:"core",question:"What are keys in React and why are they important?",english:"Keys are unique identifiers used by React to identify which items have changed, been added, or removed in lists. Keys should be stable, predictable, and unique among siblings.",bangla:"Keys ইউনিক আইডেন্টিফায়ার যা React লিস্টে আইটেম শনাক্ত করতে ব্যবহার করে।",explanation:"Never use array index as key for dynamic lists. Use unique IDs from data.",code:"// Bad: using index as key\n{todos.map((todo, index) => <li key={index}>{todo.text}</li>)}\n// Good: using unique ID\n{todos.map(todo => <li key={todo.id}>{todo.text}</li>)}\n// Adding new items\nconst addTodo = (text) => {\n  setTodos([...todos, { id: Date.now(), text, completed: false }]);\n};"},
-        {id:18,topic:"state",question:"Explain the concept of lifting state up.",english:"Lifting state up means moving shared state to the closest common ancestor component. This enables multiple child components to share and synchronize state.",bangla:"লিফটিং স্টেট আপ মানে শেয়ার্ড স্টেটকে সাধারণ অ্যানসেস্টর কম্পোনেন্টে সরানো।",explanation:"This pattern maintains single source of truth. Children become controlled components.",code:"function Calculator() {\n  const [temp, setTemp] = useState('');\n  const [scale, setScale] = useState('c');\n  const celsius = scale === 'f' ? convert(temp) : temp;\n  const fahrenheit = scale === 'c' ? convert(temp) : temp;\n  return (<div><TempInput scale=\"c\" temp={celsius} onTempChange={setTemp} /><TempInput scale=\"f\" temp={fahrenheit} onTempChange={setTemp} /></div>);\n}"},
-        {id:19,topic:"hooks",question:"What are React Hooks rules?",english:"React Hooks rules: 1) Only call hooks at the top level (not inside loops, conditions, or nested functions). 2) Only call hooks from React functions (functional components or custom hooks).",bangla:"React Hooks নিয়ম: 1) শুধুমাত্র টপ লেভেলে হুক কল করুন। 2) শুধুমাত্র React ফাংশন থেকে হুক কল করুন।",explanation:"These rules ensure hooks are called in the same order on every render.",code:"// Wrong: Hook inside condition\nif (condition) { const [state, setState] = useState(0); }\n// Wrong: Hook inside loop\nitems.forEach(() => { const [state, setState] = useState(0); });\n// Correct: Hooks at top level\nconst [count, setCount] = useState(0);\n// Custom hook\nfunction useCustomHook() { const [value, setValue] = useState(0); return value; }"},
-        {id:20,topic:"routing",question:"What is React Router and its core components?",english:"React Router is the standard routing library for React. Core components: BrowserRouter, Routes, Route, Link, NavLink, Navigate, Outlet.",bangla:"React Router React-এর স্ট্যান্ডার্ড রাউটিং লাইব্রেরি।",explanation:"React Router v6 uses Routes instead of Switch, and element prop instead of component.",code:"import { BrowserRouter, Routes, Route, Link, useParams } from 'react-router-dom';\nfunction App() {\n  return (<BrowserRouter><nav><Link to=\"/\">Home</Link><Link to=\"/about\">About</Link></nav><Routes><Route path=\"/\" element={<Home />} /><Route path=\"/about\" element={<About />} /><Route path=\"/users/:id\" element={<User />} /></Routes></BrowserRouter>);\n}\nfunction User() { const { id } = useParams(); return <h1>User: {id}</h1>; }"},
-        {id:21,topic:"advanced",question:"What is React.lazy and Suspense?",english:"React.lazy allows code-splitting by dynamically importing components. Suspense wraps lazy components and shows fallback UI while loading. Reduces initial bundle size.",bangla:"React.lazy কোড-স্প্লিটিং অনুমতি দেয়। Suspense লোডিংয়ের সময় ফলব্যাক UI দেখায়।",explanation:"Lazy components must be wrapped in Suspense. Works with React Router for route-based splitting.",code:"import { lazy, Suspense } from 'react';\nconst Dashboard = lazy(() => import('./Dashboard'));\nfunction App() {\n  return (<Suspense fallback={<div>Loading...</div>}><Dashboard /></Suspense>);\n}"},
-        {id:22,topic:"advanced",question:"What are error boundaries in React?",english:"Error boundaries catch JavaScript errors in child component tree, log errors, and display fallback UI. They don't catch errors in event handlers, async code, or SSR.",bangla:"এরর বাউন্ডারি চাইল্ড কম্পোনেন্ট ট্রিতে এরর ধরে এবং ফলব্যাক UI দেখায়।",explanation:"Class components implement componentDidCatch and getDerivedStateFromError.",code:"class ErrorBoundary extends React.Component {\n  constructor(props) { super(props); this.state = { hasError: false }; }\n  static getDerivedStateFromError(error) { return { hasError: true }; }\n  componentDidCatch(error, info) { console.error(error, info); }\n  render() { if (this.state.hasError) return <h1>Something went wrong.</h1>; return this.props.children; }\n}\n<ErrorBoundary><BuggyComponent /></ErrorBoundary>"}
+        {id:1,question:"What is React and what are its key features?",englishAnswer:"React is a JavaScript library for building user interfaces, developed by Facebook. Key features: Virtual DOM for efficient updates, component-based architecture, JSX syntax, unidirectional data flow, hooks for state and lifecycle, and React Native for mobile.",banglaAnswer:"React হল ইউজার ইন্টারফেস তৈরির জন্য একটি JavaScript লাইব্রেরি। মূল বৈশিষ্ট্য: ভার্চুয়াল DOM, কম্পোনেন্ট-ভিত্তিক আর্কিটেকচার, JSX, ইউনিডাইরেকশনাল ডেটা ফ্লো।",explanation:"React is declarative - you describe UI, React handles updates. It only re-renders changed components via Virtual DOM diffing.",exampleCode:"function Welcome(props) { return <h1>Hello, {props.name}</h1>; }\nfunction App() {\n  return (<div><Welcome name=\"Alice\" /><Welcome name=\"Bob\" /></div>);\n}\nReactDOM.render(<App />, document.getElementById('root'));"},
+        {id:2,question:"Explain the Virtual DOM and how it works.",englishAnswer:"Virtual DOM is a lightweight JavaScript representation of the real DOM. When state changes, React creates a new virtual DOM tree, diffs it with the previous tree, identifies minimal changes, and batches updates to the real DOM, improving performance.",banglaAnswer:"ভার্চুয়াল DOM হল রিয়েল DOM-এর হালকা JavaScript উপস্থাপনা। React পরিবর্তন শনাক্ত করে শুধু প্রয়োজনীয় অংশ আপডেট করে।",explanation:"Without Virtual DOM, direct DOM manipulation is expensive. React's diffing algorithm and batching prevent unnecessary reflows.",exampleCode:"// Virtual DOM process:\n// 1. State changes -> create new virtual DOM tree\n// 2. Diff with previous virtual DOM\n// 3. Batch updates to real DOM\nconst newVdom = { type: 'div', props: { children: 'New Content' } };\nconst changes = diff(previousVdom, newVdom);\npatch(realDom, changes);"},
+        {id:3,question:"What is JSX? Why is it used?",englishAnswer:"JSX (JavaScript XML) is a syntax extension allowing HTML-like code in JavaScript. It gets transpiled to React.createElement() calls. JSX improves readability, prevents injection attacks, and provides compile-time error checking.",banglaAnswer:"JSX JavaScript-এর ভিতরে HTML-সদৃশ কোড লেখার অনুমতি দেয়। এটি React.createElement() কল এ ট্রান্সপাইল হয়।",explanation:"JSX is not required but recommended. It leverages JavaScript's power while maintaining UI structure readability.",exampleCode:"// JSX syntax\nconst element = <h1 className=\"title\">Hello, {userName}</h1>;\n// Transpiled to\nconst element = React.createElement('h1', { className: 'title' }, 'Hello, ', userName);\n// JSX with expressions\nfunction Greeting({ isLoggedIn }) {\n  return (<div>{isLoggedIn ? <h1>Welcome</h1> : <h1>Please sign in</h1>}</div>);\n}"},
+        {id:4,question:"What is the difference between state and props?",englishAnswer:"Props are read-only data passed from parent to child. State is mutable data managed within a component. Props cannot be changed by child component; state can be changed using setState or useState hook.",banglaAnswer:"Props প্যারেন্ট থেকে চাইল্ডে পাঠানো রিড-অনলি ডেটা। স্টেট হল মিউটেবল ডেটা যা কম্পোনেন্টের ভিতরে ম্যানেজ করা হয়।",explanation:"Props enable component reusability. State enables interactivity. When either changes, React re-renders.",exampleCode:"function Parent() {\n  const [count, setCount] = useState(0);\n  return <Child count={count} onIncrement={() => setCount(count + 1)} />;\n}\nfunction Child({ count, onIncrement }) {\n  return (<div><p>Count: {count}</p><button onClick={onIncrement}>+</button></div>);\n}"},
+        {id:5,question:"Explain the useState hook with example.",englishAnswer:"useState is a React Hook that adds state to functional components. It returns an array with current state value and an update function. Updates trigger re-renders. State can be any data type.",banglaAnswer:"useState ফাংশনাল কম্পোনেন্টে স্টেট যোগ করে। এটি বর্তমান স্টেট এবং আপডেট ফাংশন সহ একটি অ্যারে রিটার্ন করে।",explanation:"State updates are asynchronous and may be batched. Functional updates are safe when new state depends on previous state.",exampleCode:"function Counter() {\n  const [count, setCount] = useState(0);\n  return (<div><p>Clicked {count} times</p><button onClick={() => setCount(count + 1)}>+</button></div>);\n}\n// Object state\nconst [user, setUser] = useState({ name: '', email: '' });\nsetUser(prev => ({ ...prev, name: 'John' }));\n// Functional update\nsetCount(prev => prev + 1);"},
+        {id:6,question:"What is the useEffect hook and when to use it?",englishAnswer:"useEffect performs side effects in functional components. It runs after render. Use cases: data fetching, subscriptions, timers, DOM manipulation. Takes effect function and dependency array.",banglaAnswer:"useEffect ফাংশনাল কম্পোনেন্টে সাইড ইফেক্ট পারফর্ম করে। ডেটা ফেচিং, টাইমার, সাবস্ক্রিপশনের জন্য ব্যবহার হয়।",explanation:"Empty deps runs once on mount. No deps runs after every render. Cleanup function runs on unmount.",exampleCode:"// Data fetching\nuseEffect(() => { fetch('/api/users/1').then(res => res.json()).then(setUser); }, []);\n// Event listener\nuseEffect(() => { const handler = () => setWidth(window.innerWidth); window.addEventListener('resize', handler); return () => window.removeEventListener('resize', handler); }, []);\n// Timer\nuseEffect(() => { const id = setInterval(() => setSeconds(s => s+1), 1000); return () => clearInterval(id); }, []);"},
+        {id:7,question:"What is the difference between props drilling and Context API?",englishAnswer:"Props drilling passes data through multiple intermediate components. Context API shares values across component tree without prop drilling. Context uses provider-consumer pattern.",banglaAnswer:"প্রপস ড্রিলিং মধ্যস্থতাকারী কম্পোনেন্টের মাধ্যমে ডেটা পাস করে। Context API প্রপস ড্রিলিং ছাড়াই ভ্যালু শেয়ার করে।",explanation:"Context is good for global data like theme, auth, language. For complex state, consider Redux.",exampleCode:"const ThemeContext = React.createContext();\nfunction App() {\n  const [theme, setTheme] = useState('light');\n  return (<ThemeContext.Provider value={{ theme, setTheme }}><Dashboard /></ThemeContext.Provider>);\n}\nfunction Dashboard() {\n  const { theme, setTheme } = useContext(ThemeContext);\n  return <button onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>{theme}</button>;\n}"},
+        {id:8,question:"Explain the useRef hook and its use cases.",englishAnswer:"useRef returns a mutable object with .current property that persists across renders without causing re-renders. Used for accessing DOM elements directly, storing mutable values, and persisting values between renders.",banglaAnswer:"useRef .current প্রপার্টি সহ একটি মিউটেবল অবজেক্ট রিটার্ন করে যা রি-রেন্ডার ট্রিগার করে না।",explanation:"useRef doesn't cause re-renders when .current changes. Use for imperative DOM operations and storing interval IDs.",exampleCode:"// Accessing DOM\nconst inputRef = useRef(null);\ninputRef.current.focus();\n<input ref={inputRef} />\n// Store previous value\nfunction usePrevious(value) {\n  const ref = useRef();\n  useEffect(() => { ref.current = value; }, [value]);\n  return ref.current;\n}\n// Store interval ID\nconst intervalRef = useRef();\nintervalRef.current = setInterval(() => {}, 1000);"},
+        {id:9,question:"What is React.memo and how does it work?",englishAnswer:"React.memo is a higher-order component that memoizes functional components. It prevents re-rendering if props haven't changed. Similar to PureComponent for class components.",banglaAnswer:"React.memo ফাংশনাল কম্পোনেন্ট মেমোইজ করে। প্রপস পরিবর্তিত না হলে এটি রি-রেন্ডার প্রতিরোধ করে।",explanation:"Use React.memo for components that render often with same props. Don't over-memoize simple components.",exampleCode:"const MemoizedChild = memo(({ value }) => {\n  console.log('Rendered');\n  return <div>{value}</div>;\n});\nfunction Parent() {\n  const [count, setCount] = useState(0);\n  return (<div><button onClick={() => setCount(count+1)}>Count: {count}</button><MemoizedChild value=\"Static\" /></div>);\n}"},
+        {id:10,question:"What are React fragments and why use them?",englishAnswer:"Fragments let you group multiple children without adding extra DOM nodes. Use <React.Fragment> or <>. Prevents unnecessary div wrappers that can break CSS layouts.",banglaAnswer:"ফ্র্যাগমেন্ট অতিরিক্ত DOM নোড ছাড়াই একাধিক চাইল্ড গ্রুপ করে।",explanation:"Fragments are useful in tables, lists, and CSS Grid layouts. Keyed fragments need explicit React.Fragment with key.",exampleCode:"// Without Fragment (adds extra div)\nfunction Component() { return (<div><Child1 /><Child2 /></div>); }\n// With Fragment\nfunction Component() { return (<><Child1 /><Child2 /></>); }\n// Keyed fragments\n{items.map(item => (<React.Fragment key={item.id}><dt>{item.term}</dt><dd>{item.desc}</dd></React.Fragment>))}"},
+        {id:11,question:"What is the useCallback hook and when to use it?",englishAnswer:"useCallback returns a memoized version of a function that only changes if dependencies change. It prevents unnecessary re-creation of functions on every render, optimizing child components that rely on reference equality.",banglaAnswer:"useCallback একটি ফাংশনের মেমোইজড ভার্সন রিটার্ন করে। অপ্রয়োজনীয় ফাংশন রিক্রিয়েশন প্রতিরোধ করে।",explanation:"Use when passing callbacks to optimized child components. Pair with React.memo for performance gains.",exampleCode:"function Parent() {\n  const [count, setCount] = useState(0);\n  const handleClick = useCallback(() => { console.log('Clicked'); }, []);\n  return <ExpensiveChild onClick={handleClick} />;\n}\nconst Button = React.memo(({ onClick }) => {\n  return <button onClick={onClick}>Click</button>;\n});"},
+        {id:12,question:"What is the useMemo hook and how is it different from useCallback?",englishAnswer:"useMemo memoizes computed values (objects, arrays, calculations), while useCallback memoizes functions. useMemo returns memoized value, useCallback returns memoized function.",banglaAnswer:"useMemo কম্পিউটেড ভ্যালু মেমোইজ করে, useCallback ফাংশন মেমোইজ করে।",explanation:"Use useMemo for expensive calculations like sorting and filtering. Use useCallback to maintain function reference equality.",exampleCode:"// useMemo - memoizes value\nconst filteredTodos = useMemo(() => {\n  return todos.filter(todo => todo.text.includes(filter));\n}, [todos, filter]);\n// useCallback - memoizes function\nconst handleSelect = useCallback((item) => {\n  console.log('Selected:', item);\n}, []);"},
+        {id:13,question:"Explain the useReducer hook with an example.",englishAnswer:"useReducer is an alternative to useState for complex state logic involving multiple sub-values or when next state depends on previous. It takes a reducer function and initial state, returns current state and dispatch function.",banglaAnswer:"useReducer জটিল স্টেট লজিকের জন্য useState-এর বিকল্প।",explanation:"useReducer follows Redux pattern. Ideal for form state, shopping cart, or state with many transitions.",exampleCode:"function counterReducer(state, action) {\n  switch(action.type) {\n    case 'INCREMENT': return { count: state.count + 1 };\n    case 'DECREMENT': return { count: state.count - 1 };\n    case 'RESET': return { count: 0 };\n    default: return state;\n  }\n}\nfunction Counter() {\n  const [state, dispatch] = useReducer(counterReducer, { count: 0 });\n  return (<div><p>Count: {state.count}</p><button onClick={() => dispatch({type:'INCREMENT'})}>+</button></div>);\n}"},
+        {id:14,question:"What are React lifecycle methods in class components?",englishAnswer:"Lifecycle methods: Mounting (constructor, render, componentDidMount), Updating (render, componentDidUpdate), Unmounting (componentWillUnmount). Error Boundaries use componentDidCatch.",banglaAnswer:"ক্লাস কম্পোনেন্টে লাইফসাইকেল মেথড: Mounting, Updating, Unmounting।",explanation:"Functional components use useEffect for similar functionality. componentDidMount for data fetching, componentWillUnmount for cleanup.",exampleCode:"class LifecycleDemo extends React.Component {\n  componentDidMount() { console.log('Mounted'); fetch('/api/data').then(setData); }\n  componentDidUpdate(prevProps) { if (prevProps.id !== this.props.id) { this.fetchData(); } }\n  componentWillUnmount() { clearInterval(this.interval); }\n  render() { return <div>{this.state.data}</div>; }\n}"},
+        {id:15,question:"What are controlled and uncontrolled components?",englishAnswer:"Controlled components have form data handled by React state. Uncontrolled components store form data in DOM using refs. Controlled components offer more control and validation.",banglaAnswer:"কন্ট্রোলড কম্পোনেন্টে ফর্ম ডেটা React স্টেট দ্বারা নিয়ন্ত্রিত হয়। আনকন্ট্রোলড কম্পোনেন্ট DOM-এ ডেটা সংরক্ষণ করে।",explanation:"Use controlled for most forms. Use uncontrolled for file inputs or simple forms with minimal logic.",exampleCode:"// Controlled\nfunction ControlledForm() {\n  const [name, setName] = useState('');\n  return <input value={name} onChange={e => setName(e.target.value)} />;\n}\n// Uncontrolled\nfunction UncontrolledForm() {\n  const nameRef = useRef();\n  const handleSubmit = () => console.log(nameRef.current.value);\n  return <input ref={nameRef} defaultValue=\"\" />;\n}"},
+        {id:16,question:"Explain conditional rendering in React.",englishAnswer:"Conditional rendering works like JavaScript conditions. Use if statements, ternary operators, logical &&, or switch statements to render different UI based on state or props.",banglaAnswer:"কন্ডিশনাল রেন্ডারিং JavaScript কন্ডিশনের মত কাজ করে।",explanation:"Avoid nesting ternaries deeply. Use early returns. For conditional rendering of nothing, return null.",exampleCode:"function Greeting({ isLoggedIn, user }) {\n  if (!isLoggedIn) return <LoginButton />;\n  return (<div><h1>Welcome {user.name}</h1>{user.isAdmin ? <AdminPanel /> : <UserPanel />}</div>);\n}\nfunction Notification({ count }) {\n  return <div>{count > 0 && <span>{count} new messages</span>}</div>;\n}"},
+        {id:17,question:"What are keys in React and why are they important?",englishAnswer:"Keys are unique identifiers used by React to identify which items have changed, been added, or removed in lists. Keys should be stable, predictable, and unique among siblings.",banglaAnswer:"Keys ইউনিক আইডেন্টিফায়ার যা React লিস্টে আইটেম শনাক্ত করতে ব্যবহার করে।",explanation:"Never use array index as key for dynamic lists. Use unique IDs from data.",exampleCode:"// Bad: using index as key\n{todos.map((todo, index) => <li key={index}>{todo.text}</li>)}\n// Good: using unique ID\n{todos.map(todo => <li key={todo.id}>{todo.text}</li>)}\n// Adding new items\nconst addTodo = (text) => {\n  setTodos([...todos, { id: Date.now(), text, completed: false }]);\n};"},
+        {id:18,question:"Explain the concept of lifting state up.",englishAnswer:"Lifting state up means moving shared state to the closest common ancestor component. This enables multiple child components to share and synchronize state.",banglaAnswer:"লিফটিং স্টেট আপ মানে শেয়ার্ড স্টেটকে সাধারণ অ্যানসেস্টর কম্পোনেন্টে সরানো।",explanation:"This pattern maintains single source of truth. Children become controlled components.",exampleCode:"function Calculator() {\n  const [temp, setTemp] = useState('');\n  const [scale, setScale] = useState('c');\n  const celsius = scale === 'f' ? convert(temp) : temp;\n  const fahrenheit = scale === 'c' ? convert(temp) : temp;\n  return (<div><TempInput scale=\"c\" temp={celsius} onTempChange={setTemp} /><TempInput scale=\"f\" temp={fahrenheit} onTempChange={setTemp} /></div>);\n}"},
+        {id:19,question:"What are React Hooks rules?",englishAnswer:"React Hooks rules: 1) Only call hooks at the top level (not inside loops, conditions, or nested functions). 2) Only call hooks from React functions (functional components or custom hooks).",banglaAnswer:"React Hooks নিয়ম: 1) শুধুমাত্র টপ লেভেলে হুক কল করুন। 2) শুধুমাত্র React ফাংশন থেকে হুক কল করুন।",explanation:"These rules ensure hooks are called in the same order on every render.",exampleCode:"// Wrong: Hook inside condition\nif (condition) { const [state, setState] = useState(0); }\n// Wrong: Hook inside loop\nitems.forEach(() => { const [state, setState] = useState(0); });\n// Correct: Hooks at top level\nconst [count, setCount] = useState(0);\n// Custom hook\nfunction useCustomHook() { const [value, setValue] = useState(0); return value; }"},
+        {id:20,question:"What is React Router and its core components?",englishAnswer:"React Router is the standard routing library for React. Core components: BrowserRouter, Routes, Route, Link, NavLink, Navigate, Outlet.",banglaAnswer:"React Router React-এর স্ট্যান্ডার্ড রাউটিং লাইব্রেরি।",explanation:"React Router v6 uses Routes instead of Switch, and element prop instead of component.",exampleCode:"import { BrowserRouter, Routes, Route, Link, useParams } from 'react-router-dom';\nfunction App() {\n  return (<BrowserRouter><nav><Link to=\"/\">Home</Link><Link to=\"/about\">About</Link></nav><Routes><Route path=\"/\" element={<Home />} /><Route path=\"/about\" element={<About />} /><Route path=\"/users/:id\" element={<User />} /></Routes></BrowserRouter>);\n}\nfunction User() { const { id } = useParams(); return <h1>User: {id}</h1>; }"},
+        {id:21,question:"What is React.lazy and Suspense?",englishAnswer:"React.lazy allows code-splitting by dynamically importing components. Suspense wraps lazy components and shows fallback UI while loading. Reduces initial bundle size.",banglaAnswer:"React.lazy কোড-স্প্লিটিং অনুমতি দেয়। Suspense লোডিংয়ের সময় ফলব্যাক UI দেখায়।",explanation:"Lazy components must be wrapped in Suspense. Works with React Router for route-based splitting.",exampleCode:"import { lazy, Suspense } from 'react';\nconst Dashboard = lazy(() => import('./Dashboard'));\nfunction App() {\n  return (<Suspense fallback={<div>Loading...</div>}><Dashboard /></Suspense>);\n}"},
+        {id:22,question:"What are error boundaries in React?",englishAnswer:"Error boundaries catch JavaScript errors in child component tree, log errors, and display fallback UI. They don't catch errors in event handlers, async code, or SSR.",banglaAnswer:"এরর বাউন্ডারি চাইল্ড কম্পোনেন্ট ট্রিতে এরর ধরে এবং ফলব্যাক UI দেখায়।",explanation:"Class components implement componentDidCatch and getDerivedStateFromError.",exampleCode:"class ErrorBoundary extends React.Component {\n  constructor(props) { super(props); this.state = { hasError: false }; }\n  static getDerivedStateFromError(error) { return { hasError: true }; }\n  componentDidCatch(error, info) { console.error(error, info); }\n  render() { if (this.state.hasError) return <h1>Something went wrong.</h1>; return this.props.children; }\n}\n<ErrorBoundary><BuggyComponent /></ErrorBoundary>"}
     ];
 
     const SUBJECT_KEY = 'react';
-
     const container = document.getElementById('questions-container');
-    const searchBox = document.getElementById('search-box');
-    const filterBtns = document.querySelectorAll('.filter-btn');
-    const noResultsPanel = document.getElementById('no-results-panel');
 
-    let currentFilter = 'all';
-    let searchQuery = '';
-
-    // LocalStorage Helper
+    // ---------- LocalStorage Helpers ----------
     function getProgress() {
         const data = localStorage.getItem('interview_hub_progress');
         if (!data) return {};
@@ -648,31 +699,33 @@
         localStorage.setItem('interview_hub_progress', JSON.stringify(progress));
     }
 
+    function isLearned(qId) {
+        const progress = getProgress();
+        return (progress[SUBJECT_KEY] || []).includes(qId);
+    }
+
     function toggleQuestionLearned(qId) {
         const progress = getProgress();
         if (!progress[SUBJECT_KEY]) {
             progress[SUBJECT_KEY] = [];
         }
-        
+
         const index = progress[SUBJECT_KEY].indexOf(qId);
         if (index > -1) {
             progress[SUBJECT_KEY].splice(index, 1);
         } else {
             progress[SUBJECT_KEY].push(qId);
         }
-        
+
         saveProgress(progress);
         updateProgressUI();
-        
-        // Update Card Visuals
+
         const card = document.getElementById(`card-q${qId}`);
         if (card) {
-            if (progress[SUBJECT_KEY].includes(qId)) {
-                card.classList.add('learned');
-            } else {
-                card.classList.remove('learned');
-            }
+            card.classList.toggle('learned', progress[SUBJECT_KEY].includes(qId));
         }
+
+        applyFilters();
     }
 
     function updateProgressUI() {
@@ -681,20 +734,16 @@
         const total = questionsData.length;
         const count = learnedList.filter(id => questionsData.some(q => q.id === id)).length;
         const percent = total > 0 ? Math.round((count / total) * 100) : 0;
-        
-        const textEl = document.getElementById('progress-text');
-        const percentEl = document.getElementById('progress-percent');
-        const fillEl = document.getElementById('progress-bar-fill');
 
-        if (textEl) textEl.textContent = `${count} of ${total} Mastered`;
-        if (percentEl) percentEl.textContent = `${percent}%`;
-        if (fillEl) fillEl.style.width = `${percent}%`;
+        document.getElementById('progress-text').textContent = `${count} of ${total} Mastered`;
+        document.getElementById('progress-percent').textContent = `${percent}%`;
+        document.getElementById('progress-bar-fill').style.width = `${percent}%`;
     }
 
-    // Escape HTML Helper
+    // ---------- Escape HTML Helper ----------
     function escapeHtml(str) {
         if (!str) return '';
-        return str.replace(/[&<>]/g, function(m) {
+        return str.replace(/[&<>]/g, function (m) {
             if (m === '&') return '&amp;';
             if (m === '<') return '&lt;';
             if (m === '>') return '&gt;';
@@ -702,75 +751,38 @@
         });
     }
 
+    // ---------- Render ----------
     function renderQuestions() {
-        const progress = getProgress();
-        const learnedList = progress[SUBJECT_KEY] || [];
         let html = '';
-        let visibleCount = 0;
-
         questionsData.forEach(q => {
-            const isLearned = learnedList.includes(q.id);
-            const matchesFilter = currentFilter === 'all' || 
-                (currentFilter === 'learned' && isLearned) || 
-                (currentFilter === 'unlearned' && !isLearned);
-
-            const englishText = q.englishAnswer || q.english || '';
-            const banglaText = q.banglaAnswer || q.bangla || '';
-            const codeText = q.exampleCode || q.code || '';
-
-            const titleLower = q.question.toLowerCase();
-            const engLower = englishText.toLowerCase();
-            const banLower = banglaText.toLowerCase();
-            const expLower = (q.explanation || '').toLowerCase();
-            const topicLower = (q.topic || '').toLowerCase();
-            
-            const matchesSearch = !searchQuery || 
-                titleLower.includes(searchQuery) || 
-                engLower.includes(searchQuery) || 
-                banLower.includes(searchQuery) || 
-                expLower.includes(searchQuery) ||
-                topicLower.includes(searchQuery);
-
-            if (matchesFilter && matchesSearch) {
-                visibleCount++;
-                const qId = `q${q.id}`;
-                const learnedClass = isLearned ? 'learned' : '';
-                
-                html += `
-                    <div class="question-card ${learnedClass}" id="card-${qId}">
-                        <div class="card-header-wrapper">
-                            <div class="question-title-text">
-                                <span class="q-num">${q.id}</span>
-                                <h2>${escapeHtml(q.question)}</h2>
-                                ${q.topic ? `<span class="topic-badge" style="margin-left: 0.5rem; font-size: 0.75rem; background: rgba(6, 182, 212, 0.1); border-color: rgba(6, 182, 212, 0.2); color: #06b6d4;">${escapeHtml(q.topic)}</span>` : ''}
-                            </div>
-                            <button class="learned-toggle-btn" onclick="toggleQuestionLearned(${q.id})">
-                                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-                                    <polyline points="20 6 9 17 4 12"></polyline>
-                                </svg>
-                                <span>Mastered</span>
-                            </button>
-                        </div>
-                        <div class="toggle-group">
-                            <button class="toggle-btn" data-target="eng-${qId}">English Answer</button>
-                            <button class="toggle-btn" data-target="ban-${qId}">Bengali Answer</button>
-                            <button class="toggle-btn" data-target="exp-${qId}">Explanation</button>
-                            <button class="toggle-btn" data-target="code-${qId}">Example Code</button>
-                        </div>
-                        <div id="eng-${qId}" class="content-panel answer-text"><p>${escapeHtml(englishText)}</p></div>
-                        <div id="ban-${qId}" class="content-panel answer-text bangla-answer"><p>${escapeHtml(banglaText)}</p></div>
-                        <div id="exp-${qId}" class="content-panel explanation-text"><p>${escapeHtml(q.explanation)}</p></div>
-                        <div id="code-${qId}" class="content-panel code-text"><pre><code>${escapeHtml(codeText)}</code></pre></div>
+            const qId = `q${q.id}`;
+            const learned = isLearned(q.id);
+            html += `
+                <div class="question-card${learned ? ' learned' : ''}" id="card-${qId}" data-qid="${q.id}">
+                    <div class="card-header-wrapper">
+                        <div class="question-title-text"><span class="q-num">${q.id}</span> ${escapeHtml(q.question)}</div>
+                        <button class="learned-toggle-btn" onclick="toggleQuestionLearned(${q.id})">
+                            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                            <span>Mark Learned</span>
+                        </button>
                     </div>
-                `;
-            }
+                    <div class="toggle-group">
+                        <button class="toggle-btn" data-target="eng-${qId}">English Answer</button>
+                        <button class="toggle-btn" data-target="ban-${qId}">Bengali Answer</button>
+                        <button class="toggle-btn" data-target="exp-${qId}">Explanation</button>
+                        <button class="toggle-btn" data-target="code-${qId}">Example Code</button>
+                    </div>
+                    <div id="eng-${qId}" class="content-panel answer-text"><p>${escapeHtml(q.englishAnswer)}</p></div>
+                    <div id="ban-${qId}" class="content-panel answer-text bangla-answer"><p>${escapeHtml(q.banglaAnswer)}</p></div>
+                    <div id="exp-${qId}" class="content-panel explanation-text"><p>${escapeHtml(q.explanation)}</p></div>
+                    <div id="code-${qId}" class="content-panel code-text"><pre><code>${escapeHtml(q.exampleCode)}</code></pre></div>
+                </div>
+            `;
         });
-
         container.innerHTML = html;
 
-        // Re-attach panel toggle handlers
         document.querySelectorAll('.toggle-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
+            btn.addEventListener('click', function () {
                 const targetId = this.getAttribute('data-target');
                 const targetPanel = document.getElementById(targetId);
                 if (targetPanel) {
@@ -779,69 +791,68 @@
                 }
             });
         });
-
-        // Toggle card cursor glow effect
-        const cards = document.querySelectorAll('.question-card');
-        cards.forEach(card => {
-            card.addEventListener('mousemove', (e) => {
-                const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                card.style.setProperty('--mouse-x', `${x}px`);
-                card.style.setProperty('--mouse-y', `${y}px`);
-            });
-        });
-
-        if (visibleCount === 0) {
-            noResultsPanel.style.display = 'block';
-        } else {
-            noResultsPanel.style.display = 'none';
-        }
     }
 
-    // Search and filter listeners
-    if (searchBox) {
-        searchBox.addEventListener('input', (e) => {
-            searchQuery = e.target.value.toLowerCase().trim();
-            renderQuestions();
+    // ---------- Filtering & Search ----------
+    let currentFilter = 'all';
+    let searchQuery = '';
+    const noResultsPanel = document.getElementById('no-results-panel');
+
+    function applyFilters() {
+        const progress = getProgress();
+        const learnedList = progress[SUBJECT_KEY] || [];
+        let visibleCount = 0;
+
+        document.querySelectorAll('.question-card').forEach(card => {
+            const qId = parseInt(card.getAttribute('data-qid'), 10);
+            const learnedQ = learnedList.includes(qId);
+
+            const matchesFilter = currentFilter === 'all' ||
+                (currentFilter === 'learned' && learnedQ) ||
+                (currentFilter === 'unlearned' && !learnedQ);
+
+            const matchesSearch = !searchQuery || card.textContent.toLowerCase().includes(searchQuery);
+
+            if (matchesFilter && matchesSearch) {
+                card.style.display = '';
+                visibleCount++;
+            } else {
+                card.style.display = 'none';
+            }
         });
+
+        noResultsPanel.style.display = visibleCount === 0 ? 'block' : 'none';
     }
 
-    filterBtns.forEach(btn => {
+    document.getElementById('search-box').addEventListener('input', (e) => {
+        searchQuery = e.target.value.toLowerCase().trim();
+        applyFilters();
+    });
+
+    document.querySelectorAll('.filter-btn').forEach(btn => {
         btn.addEventListener('click', () => {
-            filterBtns.forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             currentFilter = btn.getAttribute('data-filter');
-            renderQuestions();
+            applyFilters();
         });
     });
 
-    // Expand/Collapse all
-    window.expandAll = function() {
-        document.querySelectorAll('.question-card .toggle-btn').forEach(btn => {
-            const targetId = btn.getAttribute('data-target');
-            const targetPanel = document.getElementById(targetId);
-            if (targetPanel && !targetPanel.classList.contains('show')) {
-                targetPanel.classList.add('show');
-                btn.classList.add('active');
-            }
-        });
+    // ---------- Expand / Collapse All ----------
+    function expandAll() {
+        document.querySelectorAll('.content-panel').forEach(p => p.classList.add('show'));
+        document.querySelectorAll('.toggle-btn').forEach(b => b.classList.add('active'));
     }
 
-    window.collapseAll = function() {
-        document.querySelectorAll('.question-card .toggle-btn').forEach(btn => {
-            const targetId = btn.getAttribute('data-target');
-            const targetPanel = document.getElementById(targetId);
-            if (targetPanel && targetPanel.classList.contains('show')) {
-                targetPanel.classList.remove('show');
-                btn.classList.remove('active');
-            }
-        });
+    function collapseAll() {
+        document.querySelectorAll('.content-panel').forEach(p => p.classList.remove('show'));
+        document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
     }
 
-    // Initial load
-    updateProgressUI();
+    // ---------- Init ----------
     renderQuestions();
-</script>
+    updateProgressUI();
+    applyFilters();
+    </script>
 </body>
 </html>

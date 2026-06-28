@@ -3,8 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>PostgreSQL Interview Prep | Toggle Q&A with Code & Explanation</title>
+    <title>PostgreSQL Engine | Technical Interview Prep</title>
+    <!-- Google Fonts: Outfit for sleek modern UI, JetBrains Mono for tags/code -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg-base: #030712;
+            --bg-surface: rgba(17, 24, 39, 0.7);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(255, 255, 255, 0.2);
+            --text-primary: #f9fafb;
+            --text-secondary: #9ca3af;
+            --font-main: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            
+            --accent-subject: #3b82f6;
+            --glow-subject: rgba(59, 130, 246, 0.15);
+            --border-subject-hover: rgba(59, 130, 246, 0.4);
+            --glow-bg-subject: rgba(59, 130, 246, 0.05);
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -12,216 +32,629 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #eef2ff;
-            color: #0f172a;
-            padding: 2rem 1rem;
-            line-height: 1.5;
+            font-family: var(--font-main);
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            line-height: 1.6;
+            padding: 2rem 1.5rem;
+        }
+
+        .ambient-glow {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--glow-subject) 0%, transparent 70%);
+            top: -100px;
+            left: -100px;
+            z-index: -1;
+            filter: blur(40px);
+            pointer-events: none;
         }
 
         .container {
-            max-width: 1300px;
+            max-width: 1000px;
             margin: 0 auto;
+            position: relative;
         }
 
-        .header {
+        .nav-header {
+            margin-bottom: 2rem;
+        }
+
+        .back-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: var(--accent-subject);
+        }
+
+        header {
             text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: 3rem;
         }
 
-        .header h1 {
-            font-size: 2.5rem;
-            background: linear-gradient(135deg, #0066a0, #336699);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-            letter-spacing: -0.5px;
-        }
-
-        .header p {
-            color: #334155;
-            margin-top: 0.5rem;
-            font-size: 1.1rem;
-        }
-
-        .badge {
-            background: #e2e8f0;
-            display: inline-block;
-            padding: 0.25rem 1rem;
-            border-radius: 40px;
+        .logo-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-color);
+            padding: 0.5rem 1.25rem;
+            border-radius: 9999px;
+            font-family: var(--font-mono);
             font-size: 0.85rem;
-            color: #1e293b;
-            margin-top: 0.75rem;
+            color: var(--accent-subject);
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(4px);
         }
 
-        .question-card {
-            background: white;
-            border-radius: 28px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-            margin-bottom: 2rem;
-            overflow: hidden;
-            transition: all 0.2s;
-            border: 1px solid #cbd5e1;
+        .logo-badge span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--accent-subject);
+            box-shadow: 0 0 10px var(--accent-subject);
         }
 
-        .question-title {
-            background: #f8fafc;
-            padding: 1.2rem 1.5rem;
-            border-bottom: 2px solid #cbd5e1;
+        h1 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            line-height: 1.15;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, var(--text-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        .question-title h2 {
-            font-size: 1.35rem;
+        .subtitle {
+            font-size: clamp(0.95rem, 1.8vw, 1.15rem);
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 1.5rem auto;
+        }
+
+        .badge-list {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .topic-badge {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-color);
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            color: var(--text-secondary);
+        }
+
+        .progress-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(12px);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .progress-title {
+            font-size: 1.1rem;
             font-weight: 600;
-            color: #0f172a;
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            flex-wrap: wrap;
+        }
+
+        .progress-stats {
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            color: var(--accent-subject);
+            font-weight: bold;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 999px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.02);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-subject) 0%, #fff 100%);
+            width: 0%;
+            border-radius: 999px;
+            transition: width 0.4s ease;
+            box-shadow: 0 0 10px var(--accent-subject);
+        }
+
+        .toolbar {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        @media (min-width: 768px) {
+            .toolbar {
+                flex-direction: row;
+            }
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            padding: 0.35rem;
+            border-radius: 9999px;
+            backdrop-filter: blur(8px);
+        }
+
+        .filter-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            padding: 0.5rem 1.25rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .filter-btn:hover {
+            color: var(--text-primary);
+        }
+
+        .filter-btn.active {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-primary);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .search-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 320px;
+        }
+
+        .search-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 9999px;
+            padding: 0.65rem 1.25rem 0.65rem 2.75rem;
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-subject);
+            background: rgba(255, 255, 255, 0.05);
+            box-shadow: 0 0 15px var(--glow-subject);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 1.1rem;
+            height: 1.1rem;
+            color: var(--text-secondary);
+            pointer-events: none;
+        }
+
+        .actions-bar {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--text-primary);
+            border-color: var(--accent-subject);
+        }
+
+        .questions-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .question-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: border-color 0.3s, box-shadow 0.3s, transform 0.2s;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(12px);
+        }
+
+        .question-card.learned {
+            border-color: rgba(16, 185, 129, 0.3) !important;
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.05);
+        }
+
+        .question-card:hover {
+            border-color: var(--border-subject-hover);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 0 0 15px -5px var(--glow-subject);
+        }
+
+        .card-header-wrapper {
+            background: rgba(15, 23, 42, 0.6);
+            padding: 1.25rem 1.5rem;
+            border-bottom: 2px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .question-title-text {
+            font-size: 1.15rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            line-height: 1.4;
+            flex: 1 1 auto;
+            min-width: 0;
         }
 
         .q-num {
-            background: #336699;
-            color: white;
-            width: 32px;
-            height: 32px;
+            background: var(--accent-subject);
+            color: #030712;
+            width: 28px;
+            height: 28px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            border-radius: 60px;
-            font-size: 0.9rem;
-            font-weight: bold;
+            border-radius: 50%;
+            font-size: 0.85rem;
+            font-weight: 700;
+            flex-shrink: 0;
+            box-shadow: 0 0 10px var(--glow-subject);
+        }
+
+        .learned-toggle-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            padding: 0.4rem 0.8rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            flex-shrink: 0;
+        }
+
+        .learned-toggle-btn:hover {
+            border-color: #10b981;
+            color: #10b981;
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .question-card.learned .learned-toggle-btn {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: #10b981;
+            color: #10b981;
+            box-shadow: 0 0 8px rgba(16, 185, 129, 0.2);
+        }
+
+        .learned-toggle-btn svg {
+            width: 14px;
+            height: 14px;
+            stroke-width: 3;
+            fill: none;
+            stroke: currentColor;
+            display: none;
+        }
+
+        .question-card.learned .learned-toggle-btn svg {
+            display: inline-block;
         }
 
         .toggle-group {
             display: flex;
             flex-wrap: wrap;
-            gap: 0.65rem;
-            padding: 1rem 1.5rem;
-            background: #ffffff;
-            border-bottom: 1px solid #e2e8f0;
+            gap: 0.5rem;
+            padding: 0.8rem 1.5rem;
+            background: rgba(255, 255, 255, 0.01);
+            border-bottom: 1px solid var(--border-color);
         }
 
         .toggle-btn {
-            background: #f1f5f9;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 40px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-color);
+            padding: 0.4rem 0.9rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
             font-weight: 500;
-            font-size: 0.85rem;
             cursor: pointer;
-            transition: 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            color: #1e293b;
+            transition: all 0.2s;
+            color: var(--text-secondary);
             font-family: inherit;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
         }
 
         .toggle-btn:hover {
-            background: #e2e8f0;
-            transform: translateY(-1px);
+            border-color: var(--accent-subject);
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.06);
         }
 
         .toggle-btn.active {
-            background: #336699;
-            color: white;
-            box-shadow: 0 2px 6px rgba(51,102,153,0.2);
+            background: var(--accent-subject);
+            color: #030712;
+            border-color: var(--accent-subject);
+            box-shadow: 0 0 10px var(--glow-subject);
+            font-weight: 600;
         }
 
         .content-panel {
             padding: 0 1.5rem;
             max-height: 0;
             overflow: hidden;
-            transition: max-height 0.35s ease-out, padding 0.2s;
-            background: #ffffff;
-            border-bottom: 1px solid transparent;
+            transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), padding 0.2s;
+            background: rgba(0, 0, 0, 0.15);
         }
 
         .content-panel.show {
-            max-height: 900px;
-            padding: 1.2rem 1.5rem;
-            border-bottom: 1px solid #e2e8f0;
+            max-height: 1200px;
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
         }
 
-        .answer-text p, .explanation-text p {
-            margin-bottom: 0.75rem;
+        .content-panel p {
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+            line-height: 1.6;
         }
 
         .bangla-answer {
             font-family: 'Segoe UI', 'Noto Sans Bengali', sans-serif;
-            line-height: 1.6;
         }
 
         pre {
-            background: #0f172a;
+            background: #090d16;
             color: #e2e8f0;
             padding: 1rem;
-            border-radius: 16px;
+            border-radius: 12px;
             overflow-x: auto;
-            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-family: var(--font-mono);
             font-size: 0.85rem;
             margin-top: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.03);
         }
 
         code {
-            font-family: monospace;
-            background: #f1f5f9;
+            font-family: var(--font-mono);
+            background: rgba(255, 255, 255, 0.08);
             padding: 0.2rem 0.4rem;
-            border-radius: 8px;
-            color: #0f172a;
+            border-radius: 6px;
+            color: var(--accent-subject);
+            font-size: 0.9em;
         }
 
         pre code {
             background: transparent;
-            color: inherit;
+            color: #e2e8f0;
             padding: 0;
+            font-size: 1em;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px dashed var(--border-color);
+            border-radius: 20px;
+            display: none;
+        }
+
+        .no-results h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
         }
 
         footer {
             text-align: center;
-            margin-top: 3rem;
-            color: #475569;
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-secondary);
             font-size: 0.85rem;
         }
 
-        @media (max-width: 640px) {
+        /* Mobile fine-tuning: question text was oversized/cramped on phones */
+        @media (max-width: 600px) {
+            body {
+                padding: 1.5rem 1rem;
+            }
+
+            .card-header-wrapper {
+                padding: 0.9rem 1rem;
+                gap: 0.6rem;
+            }
+
+            .question-title-text {
+                font-size: 0.92rem;
+                line-height: 1.4;
+                gap: 0.55rem;
+            }
+
+            .q-num {
+                width: 22px;
+                height: 22px;
+                font-size: 0.7rem;
+            }
+
+            .learned-toggle-btn {
+                font-size: 0.65rem;
+                padding: 0.35rem 0.6rem;
+                gap: 0.25rem;
+            }
+
+            .learned-toggle-btn svg {
+                width: 12px;
+                height: 12px;
+            }
+
             .toggle-group {
-                padding: 0.8rem 1rem;
+                padding: 0.7rem 1rem;
+                gap: 0.4rem;
             }
-            .question-title h2 {
-                font-size: 1.2rem;
-            }
+
             .toggle-btn {
-                padding: 0.4rem 0.8rem;
-                font-size: 0.75rem;
+                font-size: 0.72rem;
+                padding: 0.35rem 0.7rem;
+            }
+
+            .content-panel.show {
+                padding: 1rem;
+            }
+
+            .content-panel p {
+                font-size: 0.88rem;
             }
         }
     </style>
 </head>
 <body>
-<div class="container">
-    <div style="margin-top: 1rem; margin-bottom: 1rem;">
-        <a href="index.html" style="color: #475569; text-decoration: none; font-size: 0.95rem; display: inline-flex; align-items: center; gap: 0.5rem; transition: color 0.2s; font-family: 'Segoe UI', sans-serif;" onmouseover="this.style.color='#3b82f6'" onmouseout="this.style.color='#475569'">
-            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-            </svg>
-            Back to Home Hub
-        </a>
-    </div>
-    <div class="header">
-        <h1>🐘 PostgreSQL Mastery - Complete Interview Guide</h1>
-        <p>35+ essential questions — English & বাংলা answers, detailed explanations, real SQL & PL/pgSQL examples</p>
-        <div class="badge">⚡ Covers: ACID, Indexes, Joins, CTE, Window Functions, Partitioning, Replication, Performance Tuning & more</div>
-    </div>
-    <div id="questions-container"></div>
-    <footer>
-        <p>💡 Click any toggle button (English Answer / বাংলা উত্তর / Explanation / Code) — master PostgreSQL for your next interview!</p>
-    </footer>
-</div>
+    <div class="ambient-glow"></div>
+    <div class="container">
+        <!-- Navigation Header -->
+        <div class="nav-header">
+            <a href="index.html" class="back-link">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+                Back to Home Hub
+            </a>
+        </div>
 
-<script>
+        <header>
+            <div class="logo-badge">
+                <span></span>
+                EXPERT INTERVIEW ENGINE
+            </div>
+            <h1>PostgreSQL Engine</h1>
+            <p class="subtitle">Comprehensive questions with English & Bengali answers, explanations, and code examples</p>
+            <div class="badge-list">
+                <span class="topic-badge">ACID</span>
+                <span class="topic-badge">Indexes</span>
+                <span class="topic-badge">Joins</span>
+                <span class="topic-badge">CTE</span>
+                <span class="topic-badge">Window Functions</span>
+                <span class="topic-badge">Partitioning</span>
+                <span class="topic-badge">Replication</span>
+            </div>
+        </header>
+
+        <!-- Progress Card -->
+        <div class="progress-card">
+            <div class="progress-header">
+                <div class="progress-title">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="color: var(--accent-subject);">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
+                    </svg>
+                    <span>Learning Progress</span>
+                </div>
+                <div style="display:flex; align-items:center;">
+                    <div class="progress-stats" id="progress-text">0 of 35 Mastered</div>
+                    <div class="progress-stats" id="progress-percent" style="margin-left: 0.5rem;">0%</div>
+                </div>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="progress-bar-fill"></div>
+            </div>
+        </div>
+
+        <!-- Toolbar controls -->
+        <div class="toolbar">
+            <div class="filter-group">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="learned">Learned</button>
+                <button class="filter-btn" data-filter="unlearned">Unlearned</button>
+            </div>
+
+            <div class="actions-bar">
+                <button class="action-btn" onclick="expandAll()">Expand All</button>
+                <button class="action-btn" onclick="collapseAll()">Collapse All</button>
+            </div>
+
+            <div class="search-wrapper">
+                <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+                <input type="text" class="search-input" id="search-box" placeholder="Search questions...">
+            </div>
+        </div>
+
+        <!-- Questions container -->
+        <div class="questions-list" id="questions-container"></div>
+
+        <div class="no-results" id="no-results-panel">
+            <h3>No questions found</h3>
+            <p>Try refining your search or filter options.</p>
+        </div>
+
+        <footer>
+            <p>Click any toggle button to reveal answer, explanation, or code — master PostgreSQL for your interview!</p>
+        </footer>
+    </div>
+
+    <script>
     const questionsData = [
         {id:1,question:"What is PostgreSQL? Explain its key features.",englishAnswer:"PostgreSQL is a powerful, open-source object-relational database system. It supports ACID transactions, advanced data types (JSON, arrays, hstore), concurrency control (MVCC), extensibility, and standard SQL compliance.",banglaAnswer:"PostgreSQL একটি শক্তিশালী, ওপেন-সোর্স অবজেক্ট-রিলেশনাল ডাটাবেজ সিস্টেম। এটি ACID ট্রানজেকশন, উন্নত ডেটা টাইপ (JSON, arrays), MVCC, এবং SQL মানদণ্ড সমর্থন করে।",explanation:"PostgreSQL excels in reliability, feature richness, and performance. It's highly extensible with custom functions, procedural languages, and indexing methods (B-tree, Hash, GIN, GiST).",exampleCode:`-- Create table with advanced features
 CREATE TABLE products (
@@ -457,32 +890,96 @@ CREATE AGGREGATE geometric_mean(NUMERIC) (
 );`}
     ];
 
+    const SUBJECT_KEY = 'postgresql';
     const container = document.getElementById('questions-container');
-    
+
+    // ---------- LocalStorage Helpers ----------
+    function getProgress() {
+        const data = localStorage.getItem('interview_hub_progress');
+        if (!data) return {};
+        try {
+            return JSON.parse(data);
+        } catch (e) {
+            return {};
+        }
+    }
+
+    function saveProgress(progress) {
+        localStorage.setItem('interview_hub_progress', JSON.stringify(progress));
+    }
+
+    function isLearned(qId) {
+        const progress = getProgress();
+        return (progress[SUBJECT_KEY] || []).includes(qId);
+    }
+
+    function toggleQuestionLearned(qId) {
+        const progress = getProgress();
+        if (!progress[SUBJECT_KEY]) {
+            progress[SUBJECT_KEY] = [];
+        }
+
+        const index = progress[SUBJECT_KEY].indexOf(qId);
+        if (index > -1) {
+            progress[SUBJECT_KEY].splice(index, 1);
+        } else {
+            progress[SUBJECT_KEY].push(qId);
+        }
+
+        saveProgress(progress);
+        updateProgressUI();
+
+        const card = document.getElementById(`card-q${qId}`);
+        if (card) {
+            card.classList.toggle('learned', progress[SUBJECT_KEY].includes(qId));
+        }
+
+        applyFilters();
+    }
+
+    function updateProgressUI() {
+        const progress = getProgress();
+        const learnedList = progress[SUBJECT_KEY] || [];
+        const total = questionsData.length;
+        const count = learnedList.filter(id => questionsData.some(q => q.id === id)).length;
+        const percent = total > 0 ? Math.round((count / total) * 100) : 0;
+
+        document.getElementById('progress-text').textContent = `${count} of ${total} Mastered`;
+        document.getElementById('progress-percent').textContent = `${percent}%`;
+        document.getElementById('progress-bar-fill').style.width = `${percent}%`;
+    }
+
+    // ---------- Escape HTML Helper ----------
     function escapeHtml(str) {
         if (!str) return '';
-        return str.replace(/[&<>]/g, function(m) {
+        return str.replace(/[&<>]/g, function (m) {
             if (m === '&') return '&amp;';
             if (m === '<') return '&lt;';
             if (m === '>') return '&gt;';
             return m;
         });
     }
-    
+
+    // ---------- Render ----------
     function renderQuestions() {
         let html = '';
         questionsData.forEach(q => {
             const qId = `q${q.id}`;
+            const learned = isLearned(q.id);
             html += `
-                <div class="question-card" id="${qId}">
-                    <div class="question-title">
-                        <h2><span class="q-num">${q.id}</span> ${escapeHtml(q.question)}</h2>
+                <div class="question-card${learned ? ' learned' : ''}" id="card-${qId}" data-qid="${q.id}">
+                    <div class="card-header-wrapper">
+                        <div class="question-title-text"><span class="q-num">${q.id}</span> ${escapeHtml(q.question)}</div>
+                        <button class="learned-toggle-btn" onclick="toggleQuestionLearned(${q.id})">
+                            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                            <span>Mark Learned</span>
+                        </button>
                     </div>
                     <div class="toggle-group">
-                        <button class="toggle-btn eng-btn" data-target="eng-${qId}">🇬🇧 English Answer</button>
-                        <button class="toggle-btn ban-btn" data-target="ban-${qId}">🇧🇩 বাংলা উত্তর</button>
-                        <button class="toggle-btn exp-btn" data-target="exp-${qId}">📖 Explanation</button>
-                        <button class="toggle-btn code-btn" data-target="code-${qId}">💻 Example Code</button>
+                        <button class="toggle-btn" data-target="eng-${qId}">English Answer</button>
+                        <button class="toggle-btn" data-target="ban-${qId}">Bengali Answer</button>
+                        <button class="toggle-btn" data-target="exp-${qId}">Explanation</button>
+                        <button class="toggle-btn" data-target="code-${qId}">Example Code</button>
                     </div>
                     <div id="eng-${qId}" class="content-panel answer-text"><p>${escapeHtml(q.englishAnswer)}</p></div>
                     <div id="ban-${qId}" class="content-panel answer-text bangla-answer"><p>${escapeHtml(q.banglaAnswer)}</p></div>
@@ -492,9 +989,9 @@ CREATE AGGREGATE geometric_mean(NUMERIC) (
             `;
         });
         container.innerHTML = html;
-        
+
         document.querySelectorAll('.toggle-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
+            btn.addEventListener('click', function () {
                 const targetId = this.getAttribute('data-target');
                 const targetPanel = document.getElementById(targetId);
                 if (targetPanel) {
@@ -504,8 +1001,67 @@ CREATE AGGREGATE geometric_mean(NUMERIC) (
             });
         });
     }
-    
+
+    // ---------- Filtering & Search ----------
+    let currentFilter = 'all';
+    let searchQuery = '';
+    const noResultsPanel = document.getElementById('no-results-panel');
+
+    function applyFilters() {
+        const progress = getProgress();
+        const learnedList = progress[SUBJECT_KEY] || [];
+        let visibleCount = 0;
+
+        document.querySelectorAll('.question-card').forEach(card => {
+            const qId = parseInt(card.getAttribute('data-qid'), 10);
+            const learnedQ = learnedList.includes(qId);
+
+            const matchesFilter = currentFilter === 'all' ||
+                (currentFilter === 'learned' && learnedQ) ||
+                (currentFilter === 'unlearned' && !learnedQ);
+
+            const matchesSearch = !searchQuery || card.textContent.toLowerCase().includes(searchQuery);
+
+            if (matchesFilter && matchesSearch) {
+                card.style.display = '';
+                visibleCount++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        noResultsPanel.style.display = visibleCount === 0 ? 'block' : 'none';
+    }
+
+    document.getElementById('search-box').addEventListener('input', (e) => {
+        searchQuery = e.target.value.toLowerCase().trim();
+        applyFilters();
+    });
+
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentFilter = btn.getAttribute('data-filter');
+            applyFilters();
+        });
+    });
+
+    // ---------- Expand / Collapse All ----------
+    function expandAll() {
+        document.querySelectorAll('.content-panel').forEach(p => p.classList.add('show'));
+        document.querySelectorAll('.toggle-btn').forEach(b => b.classList.add('active'));
+    }
+
+    function collapseAll() {
+        document.querySelectorAll('.content-panel').forEach(p => p.classList.remove('show'));
+        document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+    }
+
+    // ---------- Init ----------
     renderQuestions();
-</script>
+    updateProgressUI();
+    applyFilters();
+    </script>
 </body>
 </html>
